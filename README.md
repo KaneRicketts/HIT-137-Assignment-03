@@ -38,20 +38,20 @@ enemy tanks or something
 
 Steps required:
 
-1) Choose the game idea.
-2) Decide on character(s)? Options? Or just one?
-3) Decide on character class specs:
-4) Decide on projectile class specs:
-5) Character life bar? Lives/Health? (3 lives, 100% health? - carried through whole game? per level?).
-6) Determine enemy type(s) based on above game idea.
-7) Decide on enemy(ies) class specs:
-8) Decide on enemy(ies) (toxicity/weapon/projectile?) class specs:
-9) Enemy life bar? Health? (no lives).
-10) Determine collectible(s) suitable for game idea.
+1) Choose the game idea = Cave Adventure
+2) Decide on character(s)? Options? Or just one? one character named Herbert
+3) Decide on character class specs: Human 
+4) Decide on projectile class specs: 
+5) Character life bar? Lives/Health? (3 lives, 100% health? - carried through whole game? per level?). 3 lives each level
+6) Determine enemy type(s) based on above game idea. spiders, bugs, bats
+7) Decide on enemy(ies) class specs: 
+8) Decide on enemy(ies) (toxicity/weapon/projectile?) class specs: touch attack
+9) Enemy life bar? Health? (no lives). 1%
+10) Determine collectible(s) suitable for game idea. coins
 11) Decide on collectible(s) class specs:
-12) Determine length of 3 levels.
+12) Determine length of 3 levels. timer of 30secs maybe
 13) Determine contents of each levels.
-14) Decide on number of enemies per level:
+14) Decide on number of enemies per level: 10,20,30
 15) Decide on type of enemy (combined? level 2 enemies + level 1 enemies? Or isolated, i.e. all same on one level, then new for next?).
 16) Decide on level structure(s): (World view? Platform/Floor-Level/Cloud?)  (Obstacles? Jump/Crouch?).
 17) Decide on passive enemy objects: (Cactus/Toxic-Spore-Cloud?)  (Stairway/Fall/Ground-Disruption/Distrubance?).
