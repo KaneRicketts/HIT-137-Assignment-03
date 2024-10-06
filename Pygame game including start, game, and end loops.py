@@ -49,14 +49,7 @@ restart_button = pygame.image.load("RESTART.png").convert_alpha()
 clock = pygame.time.Clock()     # The funtion to use our variable to set FPS.
 FPS = 60        # The FPS we want the game to run at.
 
-collisions = 0
-score = 0
-player_speed = 5
-enemy_speed = 5
-speed = 2
-
         # Bakgrounds
-
 # Start Background
 start_background_image = pygame.image.load("cave.jpg").convert_alpha()
 start_rect = start_background_image.get_rect()
@@ -65,17 +58,12 @@ start_rect = start_background_image.get_rect()
 background_image = pygame.image.load("golden_cave_background.png").convert_alpha()
 background_width = background_image.get_width()
 background_height = background_image.get_height()
-print(background_height)
 
 tiles = 3
 
 # Game-Over Background
 end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
 end_rect = end_background_image.get_rect()
-
-button_width = 760      # Approx
-button_height = 260     # Approx
-centre_of_screen = ((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 
 # Define all the classes:
 class Buttons():
@@ -115,17 +103,18 @@ class Buttons():
         return clicked
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, health: int):
+    def __init__(self, health: int, scale: int):
         super(Player, self).__init__() 
-        self.image = pygame.image.load("hubert.png").convert_alpha()
-        width = self.image.get_width()
-        height = self.image.get_height()
-        self.surf = pygame.Surface((width, height))
-        self.rect = self.surf.get_rect(center = (int(width/2),int(height/2)))
+        self.surf = pygame.image.load("hubert.png").convert_alpha()
+        self.surf.set_colorkey(WHITE, RLEACCEL)
+        width = self.surf.get_width()
+        height = self.surf.get_height()
+        self.surf = pygame.transform.scale(self.surf, ((int(width * scale)), (int(height * scale))))
+        self.rect = self.surf.get_rect()
         self.missiles = []
         self.health = health
 
-    def move(self):
+    def move(self, pressed_keys):
         # Move the sprite based on keyboard input.
         pressed_keys = pygame.key.get_pressed()
 
@@ -146,8 +135,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = SCREEN_WIDTH
         if self.rect.top <= 0:
             self.rect.top = 0
-        elif self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        elif self.rect.bottom >= 420:
+            self.rect.bottom = 420
 
     def shoot(self):
         missile = Weapon(self.rect.centerx, self.rect.bottom)
@@ -159,37 +148,27 @@ class Player(pygame.sprite.Sprite):
         health_rect.midbottom = self.rect.centerx, self.rect.top
         max_health = 100
         draw_health_bar(surf, health_rect.topleft, health_rect.size, 
-                (0, 0, 0), (255, 0, 0), (0, 255, 0), self.health/max_health)
+                BLACK, RED, GREEN, self.health/max_health)
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__() 
-        self.image = pygame.image.load("spiders.jpg")
-        width = self.image.get_width()
-        height = self.image.get_height()
+        self.surf = pygame.image.load("missile.png").convert()
+        self.surf.set_colorkey((WHITE), RLEACCEL)
+        width = self.surf.get_width()
+        height = self.surf.get_height()
         self.surf = pygame.Surface((width, height))
-        self.rect = self.surf.get_rect(center = (int(width/2),int(height/2)))
+        self.rect = self.surf.get_rect(center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT)
+                    ))
+        self.speed = random.randint(5, 20)
 
-    def move(self):
-        pressed_keys = pygame.key.get_pressed()
+    def update(self):
+        self.rect.move_ip(-self.speed, 0)
+        if self.rect.right < 0:
+            self.kill()
 
-        if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -5)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 5)
-        if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-5, 0)      
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(5, 0)
-
-    def move(self):
-        self.rect.move_ip(0, speed)
-        if (self.rect.top > 600):
-            score += 1
-            self.rect.top = 0
-            self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
-        return score
-    
     def shoot():
         pass
 
@@ -218,6 +197,7 @@ class Collectible:
         self.add_points = add_points
         self.add_health = add_health
         self.add_lives = add_lives
+
 """
 class HealthBar:
     ""The size and view of the Health Bar is defined here.""
@@ -254,11 +234,11 @@ def draw_health_bar(surf, pos, size, borderC, backC, healthC, progress):
 
 # Initialise instances of class objects.
 
-player1: Player = Player(health = 100)
+player1: Player = Player(health = 100, scale = .2)
 
-#bug_enemy: Enemy = Enemy(speed = 4, max_health = 10, lives = 1, jump = 0, fly = False)
-#bat_enemy: Enemy = Enemy(speed = 4, max_health = 20, lives = 1, jump = 0, fly = True)
-#boss_enemy: Enemy = Enemy(speed = 5, max_health = 50, lives = 2, jump = 10, fly = False)
+missile: Enemy = Enemy()
+#bat_enemy: Enemy = Enemy()
+#boss_enemy: Enemy = Enemy()
 
 start_button: Buttons = Buttons(130, 435, start_button, scale = 0.5)
 exit_button: Buttons = Buttons(510,435, exit_button, scale = 0.5)
@@ -274,11 +254,11 @@ enemies = pygame.sprite.Group()
 missiles = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player1)
-
+"""
 # Define user events. (EXAMPLES)
 enemy_speed_increase = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_speed_increase, 1000)
-
+"""
 add_enemy = pygame.USEREVENT + 1
 pygame.time.set_timer(add_enemy, 750)
 
@@ -309,12 +289,16 @@ collision_sound.set_volume(0.5)
     #       When RESTART is clicked, we just call the function.
 def play():
 
-    
     start_loop = True
     bye_img = font_large.render("GOODBYE", True, PURPLE)
     game_over_image = font_large.render("...GAME OVER...", True, BLUE)
     game_start_image = font_large.render("...WELCOME TO THE HUBERT GAME...", True, BLUE)
-    moving_speed = player_speed
+    moving_speed = 0
+    player_speed = 5
+    enemy_speed = 5
+    collisions = 0
+    score = 0
+    speed = 2
 
                                             # Create the start page loop.
     while start_loop:
@@ -337,7 +321,7 @@ def play():
                 sys.exit()
 
             elif event.type == KEYDOWN:
-                if KEYDOWN[K_ESCAPE]:
+                if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
 
@@ -369,7 +353,8 @@ def play():
         # Update and render background.
         for i in range(0, tiles):
             SCREEN_SURFACE.blit(background_image, (i * background_width + moving_speed, 30))
-        
+        pygame.display.update()
+
         moving_speed -= 1
 
         if abs(moving_speed) > background_width:
@@ -395,8 +380,8 @@ def play():
                 if event.key == K_SPACE:
                     player1.shoot()
 
-        """            
-        # Is the time right for a new enemy.
+
+            # Is the time right for a new enemy.
             elif event.type == add_enemy:
 
                 # Create the new enemy, and add it to our sprite groups.
@@ -406,19 +391,20 @@ def play():
 
         # Get the set of keys pressed and check for user input to player controls.
         pressed_keys = pygame.key.get_pressed()
-        player1.update(pressed_keys)
-        
+        player1.move(pressed_keys)
+
         # Update the position of our enemies.
         enemies.update()
 
         # Add a Scorecard/healthbar/etc here (example)
         player1.draw_health(SCREEN_SURFACE)
-            
+
+        """           
         #SCREEN_SURFACE.blit(background, (0,0))
         scores = font.render("SCORE", True, BLACK)
         SCREEN_SURFACE.blit(scores, (10,10))
-        
-    # Draw all our sprites
+        """     
+        # Draw all our sprites
         for entity in all_sprites:
             SCREEN_SURFACE.blit(entity.surf, entity.rect)
         
@@ -426,24 +412,25 @@ def play():
                 missile.update()
                 if pygame.sprite.spritecollide(missile, enemies, True):
                     missile.kill()
-                    collisions +=1
+                    collisions += 1
                     continue
 
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollide(player1, enemies, dokill = True):
             # If so, kill missile and subtract health.
             player1.health -= 10
-            if player1.health <= 0:
-                time.sleep(0.5)
-                SCREEN_SURFACE.fill(RED)
-                SCREEN_SURFACE.blit(game_over_image, (30,250))
 
-                pygame.display.update()
-                for entity in all_sprites:
-                    entity.kill() 
-                time.sleep(1.5)
-                running = False
-            """
+        if player1.health <= 0:
+            time.sleep(0.5)               
+            SCREEN_SURFACE.fill(RED)
+            SCREEN_SURFACE.blit(game_over_image, (30,250)) 
+            
+            for entity in all_sprites:
+                entity.kill()
+            player1.health = 100
+            
+            time.sleep(1.5)
+            running = False
         
         # Update the display for each loop.
         pygame.display.update()
@@ -465,7 +452,7 @@ def play():
                 sys.exit()
 
             elif event.type == KEYDOWN:
-                if KEYDOWN[K_ESCAPE]:
+                if event.key == K_ESCAPE:
                     game_over_screen = False
 
         if restart_button.draw():
