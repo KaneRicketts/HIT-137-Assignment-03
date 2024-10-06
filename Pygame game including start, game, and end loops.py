@@ -9,21 +9,21 @@ pygame.init()       # This initialises all the imported pygame modules.
 # Initialising colour variables for common colours.
 
 RED   = (255, 0, 0)
-PINK = (255,20,147)
+PINK = (255, 20, 147)
 GREEN = (0, 255, 0)
-DARKGREEN = (0,100,0)
+DARKGREEN = (0, 100, 0)
 BLUE  = (0, 0, 255)
-SKYBLUE = (0,191,255)
-CYAN = (0,255,255)
+SKYBLUE = (0, 191, 255)
+CYAN = (0, 255, 255)
 BLACK = (0, 0, 0)
-GRAY = (128,128,128)
-LIGHTGRAY = (211,211,211)
+GRAY = (128, 128, 128)
+LIGHTGRAY = (211, 211, 211)
 WHITE = (255, 255, 255)
-MAGENTA = (255,0,255)
-PURPLE = (128,0,128)
-GOLD = (255,215,0)
-ORANGE = (255,165,0)
-BROWN = (139,69,19)
+MAGENTA = (255, 0, 255)
+PURPLE = (128, 0, 128)
+GOLD = (255, 215, 0)
+ORANGE = (255, 165, 0)
+BROWN = (139, 69, 19)
 
 # Setting up the display.
 SCREEN_WIDTH = 1000
@@ -43,8 +43,9 @@ start_button = pygame.image.load("START.png").convert_alpha()
 exit_button = pygame.image.load("EXIT.png").convert_alpha()
 restart_button = pygame.image.load("RESTART.png").convert_alpha()
 
-# Initialise other variables.
-  #Setting up a clock (FPS) 
+        # Initialise other variables.
+
+# Setting up a clock (FPS) 
 clock = pygame.time.Clock()     # The funtion to use our variable to set FPS.
 FPS = 60        # The FPS we want the game to run at.
 
@@ -54,6 +55,8 @@ player_speed = 5
 enemy_speed = 5
 speed = 2
 
+        # Bakgrounds
+
 # Start Background
 start_background_image = pygame.image.load("cave.jpg").convert_alpha()
 start_rect = start_background_image.get_rect()
@@ -61,8 +64,10 @@ start_rect = start_background_image.get_rect()
 # Game Background
 background_image = pygame.image.load("golden_cave_background.png").convert_alpha()
 background_width = background_image.get_width()
-tiles = round(SCREEN_WIDTH / background_width) + 1
-moving_speed = 0
+background_height = background_image.get_height()
+print(background_height)
+
+tiles = 3
 
 # Game-Over Background
 end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
@@ -238,6 +243,7 @@ class HealthBar:
         current_health += -(damage) + add_health
         return current_health
 """
+        # (EXAMPLE from jet game)
 def draw_health_bar(surf, pos, size, borderC, backC, healthC, progress):
     pygame.draw.rect(surf, backC, (*pos, *size))
     pygame.draw.rect(surf, borderC, (*pos, *size), 1)
@@ -269,20 +275,18 @@ missiles = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player1)
 
-# Define user events.
+# Define user events. (EXAMPLES)
 enemy_speed_increase = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_speed_increase, 1000)
 
+add_enemy = pygame.USEREVENT + 1
+pygame.time.set_timer(add_enemy, 750)
 
 
-# Create custom events for adding a new enemy and cloud
-ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 750)
-
-"""
 # Set up music.
 
-(EXAMPLES)
+"""
+(EXAMPLES from jet game)
 # Load and play our background music
 # Sound source: http://ccmixter.org/files/Apoxode/59262
 # License: https://creativecommons.org/licenses/by/3.0/
@@ -305,12 +309,14 @@ collision_sound.set_volume(0.5)
     #       When RESTART is clicked, we just call the function.
 def play():
 
-    # Create the start page loop.
+    
     start_loop = True
     bye_img = font_large.render("GOODBYE", True, PURPLE)
     game_over_image = font_large.render("...GAME OVER...", True, BLUE)
-    moving_speed = 0
+    game_start_image = font_large.render("...WELCOME TO THE HUBERT GAME...", True, BLUE)
+    moving_speed = player_speed
 
+                                            # Create the start page loop.
     while start_loop:
         
         # Set a frame rate for the game.
@@ -319,7 +325,9 @@ def play():
         SCREEN_SURFACE.fill(WHITE)
 
         # Draw the background image to the screen.
-        SCREEN_SURFACE.blit(start_background_image, (0,0))
+        SCREEN_SURFACE.blit(start_background_image, (260, 100))
+
+        SCREEN_SURFACE.blit(game_start_image, (175,30))
 
         # Check for close or escape event.
         for event in pygame.event.get():
@@ -350,19 +358,19 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-    # Create the main game loop.
+                                        # Create the main game loop.
     running = True
     while running:
 
         # Set a frame rate for the game.
         clock.tick(FPS)
-        SCREEN_SURFACE.fill(WHITE)
+        SCREEN_SURFACE.fill(BLACK)
 
         # Update and render background.
         for i in range(0, tiles):
-            SCREEN_SURFACE.blit(background_image, (i * background_width + moving_speed, 0))
+            SCREEN_SURFACE.blit(background_image, (i * background_width + moving_speed, 30))
         
-        moving_speed -= 2
+        moving_speed -= 1
 
         if abs(moving_speed) > background_width:
             moving_speed = 0
@@ -389,7 +397,7 @@ def play():
 
         """            
         # Is the time right for a new enemy.
-            elif event.type == ADDENEMY:
+            elif event.type == add_enemy:
 
                 # Create the new enemy, and add it to our sprite groups.
                 new_enemy = Enemy()
@@ -440,7 +448,7 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-    # Create the final game-over page loop.
+                                    # Create the final game-over page loop.
     game_over_screen = True
 
     while game_over_screen:
