@@ -49,6 +49,7 @@ def play():
     moving_speed = 0        # Background Scroll speed variable
     collisions = 0          # To keep score of killed enemies
     coin_score = 0          # To keep score of collected coins
+    current_level = 1       # To keep track of the current level
 
     # Initialising Images
     # Button images
@@ -66,6 +67,13 @@ def play():
     background_width = background_image.get_width()
     background_height = background_image.get_height()
     tiles = 3       # How many game background images for smooth screen movement.
+ 
+     # Level 2 Background
+    level2_background_image = pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\large-deserted-cave-with-carved-entrance_1311536-6268.jpg').convert_alpha()
+    level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
+
+
+
     # Game-Over Background
     end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
     end_rect = end_background_image.get_rect()
@@ -370,6 +378,23 @@ def play():
         if abs(moving_speed) > background_width:
             moving_speed = 0
 
+
+                 # Update background based on level.
+        if current_level == 1:
+            background_image = background_image
+            for i in range(0, tiles):
+                window.blit(background_image, (i * background_width + moving_speed, 30))
+
+        elif current_level == 2:
+            background_image = level2_background_image
+            window.blit(background_image, (0, 0))  # No need for tiling if the image fits the screen
+
+        moving_speed -= .5
+
+        if abs(moving_speed) > background_width:
+            moving_speed = 0
+   
+
         # Draw the grid over the screen.
         grid()
 
@@ -433,6 +458,9 @@ def play():
         window.blit(scores, (10,10))
         window.blit(coin_display, (10,40))
 
+        level_display = font.render(f"LEVEL: {current_level}", True, WHITE)
+        window.blit(level_display, (10,70))
+
         # Draw all our sprites
         for entity in all_sprites:
             window.blit(entity.surf, entity.rect)
@@ -445,12 +473,20 @@ def play():
                 missiles.remove(missile)
                 player1.missiles.remove(missile)
                 collisions += 1
+
             # Check for collision with bats
             if pygame.sprite.spritecollide(missile, bats, True):
                 missile.kill()
                 missiles.remove(missile)
                 player1.missiles.remove(missile)
-                # Optionally, you can increase score or add effects
+                collisions += 1
+
+                    # Level progression condition
+            if collisions >= 10 and current_level == 1:
+                    current_level = 2
+                        
+
+             
 
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollide(player1, enemies, dokill = True):
