@@ -35,7 +35,7 @@ def play():
     window = pygame.display.set_mode((screen_width, screen_height))
 
     # Setting a caption name.
-    pygame.display.set_caption("HUBERT Game")
+    pygame.display.set_caption("The Adventures of Hubert")
 
     # Initialising fonts for text.
     font = pygame.font.SysFont("8514oem", 20)
@@ -69,9 +69,9 @@ def play():
     end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
     end_rect = end_background_image.get_rect()
     # Text Images
-    bye_img = font_large.render("GOODBYE", True, PURPLE)
+    bye_img = font_large.render("Goodbye", True, PURPLE)
     game_over_image = font_large.render("...GAME OVER...", True, BLUE)
-    game_start_image = font_large.render("...WELCOME TO THE HUBERT GAME...", True, BLUE)
+    game_start_image = font_large.render("The Adventures of Hubert the game", True, BLUE)
 
     # Drawing a grid on window for later.
     grid_size = 50     # Tile size for 'square' grid overlay.
