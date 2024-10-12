@@ -62,7 +62,8 @@ def play():
     # Start Background
     start_background_image = pygame.image.load("cave.jpg").convert_alpha()
     start_rect = start_background_image.get_rect()
-    # Game Background
+
+    # Game Background - Example only.
     background_image = pygame.image.load("golden_cave_background.png").convert_alpha()
     background_width = background_image.get_width()
     background_height = background_image.get_height()
@@ -178,11 +179,14 @@ def play():
             self.rect = self.surf.get_rect()
             self.missiles = []
             self.health = health
+            self.jumping = False
+            self.velocity = [0, 0]
 
         def move(self):
             pressed_keys = pygame.key.get_pressed()
+            upwards_movement = 0
             # Move the sprite based on keyboard input.
-            if pressed_keys[K_UP]:      # If K_UP is in 'list' of pressed_keys.
+            if pressed_keys[K_UP]:
                 self.rect.move_ip(0, -5)
             if pressed_keys[K_DOWN]:
                 self.rect.move_ip(0,5)
@@ -253,7 +257,6 @@ def play():
             if self.rect.right > screen_width:
                 self.kill()
 
-    # Coin class
     class Coin(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Coin, self).__init__()
@@ -272,7 +275,6 @@ def play():
             if self.rect.right < 0:
                 self.kill()
 
-    # Bat class
     class Bat(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Bat, self).__init__()
@@ -295,7 +297,7 @@ def play():
     # Initialise instances of class objects.
 
     player = Player(health = 100, scale = .2)
-    ant_enemy = Enemy(ant_image, .1, 5, 990, 420)
+    ant_enemy = Enemy(ant_image, .1, 4, 990, 420)
 
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
     exit_button = Buttons(510,435, exit_button_img, scale = 0.5)
@@ -484,10 +486,7 @@ def play():
                     # Level progression condition
             if collisions >= 10 and current_level == 1:
                     current_level = 2
-                        
-
-             
-
+    
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollide(player, enemies, dokill = True):
             # If so, subtract health.
