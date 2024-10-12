@@ -69,7 +69,7 @@ def play():
     tiles = 3       # How many game background images for smooth screen movement.
  
      # Level 2 Background
-    level2_background_image = pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\large-deserted-cave-with-carved-entrance_1311536-6268.jpg').convert_alpha()
+    level2_background_image = pygame.image.load("large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
     level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
 
 
@@ -86,25 +86,25 @@ def play():
     # Load coin animation 
     coin_scale = 0.4  # make the coin smaller or larger
     walkCoin = [
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin1.png'), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin2.png'), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin3.png'), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin4.png'), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin5.png'), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Coin6.png'), (int(100*coin_scale), int(100*coin_scale)))
+        pygame.transform.scale(pygame.image.load("Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Coin3.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Coin4.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Coin5.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
     ]
 
     # Load bat animation 
     bat_scale = 0.6  # make the bat smaller or larger
     bat_images = [
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_1.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_2.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_3.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_4.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_5.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_6.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_7.png'), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\bat_8.png'), (int(100*bat_scale), int(50*bat_scale)))
+        pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_3.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_4.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_5.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_6.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
 
     # Drawing a grid on window for later.
@@ -294,7 +294,7 @@ def play():
 
     # Initialise instances of class objects.
 
-    player1 = Player(health = 100, scale = .2)
+    player = Player(health = 100, scale = .2)
     ant_enemy = Enemy(ant_image, .1, 5, 990, 420)
 
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
@@ -308,7 +308,7 @@ def play():
     coins = pygame.sprite.Group()
     bats = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
-    all_sprites.add(player1)
+    all_sprites.add(player)
 
     # Define user events.
 
@@ -352,7 +352,7 @@ def play():
         if exit_button.draw():
             time.sleep(.5)
             window.fill(BLACK)
-            window.blit(bye_img, (400,250))
+            window.blit(bye_img, (350,250))
             pygame.display.update()
             time.sleep(1.5)
             pygame.quit()
@@ -379,7 +379,7 @@ def play():
             moving_speed = 0
 
 
-                 # Update background based on level.
+                # Update background based on level.
         if current_level == 1:
             background_image = background_image
             for i in range(0, tiles):
@@ -414,7 +414,7 @@ def play():
                     running = False
                 # Was it the Space key? If so, player shoots weapon.
                 if event.key == K_SPACE:
-                    player1.shoot()
+                    player.shoot()
 
             # Is the time right for a new enemy.
             elif event.type == add_enemy:
@@ -443,7 +443,7 @@ def play():
                     all_sprites.add(bat)
 
         # Player "update()" call.
-        player1.move()
+        player.move()
 
         # Update the position of our enemies, coins, and bats.
         enemies.update()
@@ -451,7 +451,7 @@ def play():
         bats.update()
 
         # Add a Scorecard/healthbar/etc here
-        player1.draw_health(window)
+        player.draw_health(window)
 
         scores = font.render(f"SCORE: {collisions}", True, WHITE)
         coin_display = font.render(f"COINS: {coin_score}", True, WHITE)
@@ -465,20 +465,20 @@ def play():
         for entity in all_sprites:
             window.blit(entity.surf, entity.rect)
 
-        for missile in player1.missiles:
+        for missile in player.missiles:
             missile.update()
             missiles.add(missile)
             if pygame.sprite.spritecollide(missile, enemies, True):
                 missile.kill()
                 missiles.remove(missile)
-                player1.missiles.remove(missile)
+                player.missiles.remove(missile)
                 collisions += 1
 
             # Check for collision with bats
             if pygame.sprite.spritecollide(missile, bats, True):
                 missile.kill()
                 missiles.remove(missile)
-                player1.missiles.remove(missile)
+                player.missiles.remove(missile)
                 collisions += 1
 
                     # Level progression condition
@@ -489,23 +489,23 @@ def play():
              
 
         # Check if any enemies have collided with the player
-        if pygame.sprite.spritecollide(player1, enemies, dokill = True):
+        if pygame.sprite.spritecollide(player, enemies, dokill = True):
             # If so, subtract health.
-            player1.health -= 10
+            player.health -= 10
 
         # Check if any bats have collided with the player
-        if pygame.sprite.spritecollide(player1, bats, dokill = True):
-            player1.health -= 1  # Bat causes 1 damage
+        if pygame.sprite.spritecollide(player, bats, dokill = True):
+            player.health -= 1  # Bat causes 1 damage
 
         # Check if any coins have been collected by the player
-        coins_collected = pygame.sprite.spritecollide(player1, coins, dokill = True)
+        coins_collected = pygame.sprite.spritecollide(player, coins, dokill = True)
         if coins_collected:
             coin_score += len(coins_collected)
 
-        if player1.health <= 0:
+        if player.health <= 0:
             for entity in all_sprites:
                 entity.kill()
-            player1.health = 100
+            player.health = 100
             time.sleep(0.5)
             window.fill(RED)
             window.blit(game_over_image, (375,250))
