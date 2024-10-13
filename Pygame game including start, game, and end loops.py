@@ -108,30 +108,30 @@ def play():
 
     # Spider Down images
     spider_down_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Down_6.png').convert_alpha(),
+        pygame.image.load("Spider_Down_1.png").convert_alpha(),
+        pygame.image.load("Spider_Down_2.png").convert_alpha(),
+        pygame.image.load("Spider_Down_3.png").convert_alpha(),
+        pygame.image.load("Spider_Down_4.png").convert_alpha(),
+        pygame.image.load("Spider_Down_5.png").convert_alpha(),
+        pygame.image.load("Spider_Down_6.png").convert_alpha(),
     ]
 
     # Spider Left images
     spider_left_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Left_6.png').convert_alpha(),
+        pygame.image.load("Spider_Left_1.png").convert_alpha(),
+        pygame.image.load("Spider_Left_2.png").convert_alpha(),
+        pygame.image.load("Spider_Left_3.png").convert_alpha(),
+        pygame.image.load("Spider_Left_4.png").convert_alpha(),
+        pygame.image.load("Spider_Left_5.png").convert_alpha(),
+        pygame.image.load("Spider_Left_6.png").convert_alpha(),
     ]
 
     # Boss shooting images
     boss_shoot_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Bossshoot1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Bossshoot2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Bossshoot3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Bossshoot4.png').convert_alpha(),
+        pygame.image.load("Bossshoot1.png").convert_alpha(),
+        pygame.image.load("Bossshoot2.png").convert_alpha(),
+        pygame.image.load("Bossshoot3.png").convert_alpha(),
+        pygame.image.load("Bossshoot4.png").convert_alpha(),
     ]
 
     
@@ -149,14 +149,14 @@ def play():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # All zeros for now
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # Can be used for tile mapping
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # in the future
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     # Define all the classes:
