@@ -361,7 +361,7 @@ def play():
             self.health = health  # Adjust the health of the boss spider here
             self.direction = random.choice(['up', 'down', 'left', 'right'])
             self.last_shot = pygame.time.get_ticks()
-            self.shoot_cooldown = 5000  # Boss shoots every 5 seconds
+            self.shoot_cooldown = 3000  # Boss shoots every 5 seconds
             self.move_timer = pygame.time.get_ticks()
             self.move_delay = 1000  # Change direction every 1 second
 
@@ -432,12 +432,12 @@ def play():
             super(BossBullet, self).__init__()
             # Load bullet images and animate them
             # Adjust bullet size here
-            self.images = [pygame.transform.scale(img, (20, 20)) for img in boss_shoot_images]
+            self.images = [pygame.transform.scale(img, (30, 30)) for img in boss_shoot_images]
             self.index = 0
             self.animation_speed = 0.1
             self.image = self.images[int(self.index)]
             self.rect = self.image.get_rect(center=(x, y))
-            self.speed = 5  # Adjust bullet speed here
+            self.speed = 8  # Adjust bullet speed here
 
         def update(self):
             self.index += self.animation_speed
@@ -670,7 +670,7 @@ def play():
         # Check if any boss bullets have collided with the player
         if pygame.sprite.spritecollide(player, boss_bullets, dokill=True):
             # If so, subtract health.
-            player.health -= 10  # Adjust damage from boss bullet here
+            player.health -= 30  # Adjust damage from boss bullet here
 
         # Check if any coins have been collected by the player
         coins_collected = pygame.sprite.spritecollide(player, coins, dokill = True)
