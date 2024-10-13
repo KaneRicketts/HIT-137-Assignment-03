@@ -49,6 +49,7 @@ def play():
     collisions = 0          # To keep score of killed enemies
     coin_score = 0          # To keep score of collected coins
     current_level = 1       # To keep track of the current level
+    boss_defeated = False   # Flag to indicate if boss is defeated
 
     # Initializing Images
     # Button images
@@ -104,7 +105,7 @@ def play():
         pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
 
- # Boss Spider Images
+    # Boss Spider Images
 
     # Spider Down images
     spider_down_images = [
@@ -126,6 +127,26 @@ def play():
         pygame.image.load("Spider_Left_6.png").convert_alpha(),
     ]
 
+    # Spider Up images
+    spider_up_images = [
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_1.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_2.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_3.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_4.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_5.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_6.png').convert_alpha(),
+    ]
+
+    # Spider Right images
+    spider_right_images = [
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_1.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_2.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_3.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_4.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_5.png').convert_alpha(),
+        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_6.png').convert_alpha(),
+    ]
+
     # Boss shooting images
     boss_shoot_images = [
         pygame.image.load("Bossshoot1.png").convert_alpha(),
@@ -133,8 +154,6 @@ def play():
         pygame.image.load("Bossshoot3.png").convert_alpha(),
         pygame.image.load("Bossshoot4.png").convert_alpha(),
     ]
-
-    
 
     # Drawing a grid on window for later.
     grid_size = 50     # Tile size for 'square' grid overlay.
@@ -322,7 +341,6 @@ def play():
             if self.rect.right < 0:
                 self.kill()
 
-    
     # Boss Spider class
     class BossSpider(pygame.sprite.Sprite):
         def __init__(self, health, speed, scale):
@@ -330,6 +348,8 @@ def play():
             # Load images for different directions
             self.images_down = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_down_images]
             self.images_left = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_left_images]
+            self.images_up = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_up_images]
+            self.images_right = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_right_images]
 
             self.images = self.images_down
             self.index = 0
@@ -341,12 +361,12 @@ def play():
             self.health = health  # Adjust the health of the boss spider here
             self.direction = random.choice(['up', 'down', 'left', 'right'])
             self.last_shot = pygame.time.get_ticks()
-            self.shoot_cooldown = 5000  # Boss shoots every 5 seconds
+            self.shoot_cooldown = 3000  # Boss shoots every 5 seconds
             self.move_timer = pygame.time.get_ticks()
             self.move_delay = 1000  # Change direction every 1 second
 
         def update(self):
-           
+
             self.index += self.animation_speed
             if self.index >= len(self.images):
                 self.index = 0
@@ -360,7 +380,7 @@ def play():
 
             if self.direction == 'up':
                 self.rect.y -= self.speed
-                self.images = self.images_down  #
+                self.images = self.images_up
             elif self.direction == 'down':
                 self.rect.y += self.speed
                 self.images = self.images_down
@@ -369,7 +389,7 @@ def play():
                 self.images = self.images_left
             elif self.direction == 'right':
                 self.rect.x += self.speed
-                self.images = self.images_left  #
+                self.images = self.images_right
 
             # Ensure the boss stays within the right-hand side of the screen
             if self.rect.left < screen_width // 2:
@@ -412,12 +432,12 @@ def play():
             super(BossBullet, self).__init__()
             # Load bullet images and animate them
             # Adjust bullet size here
-            self.images = [pygame.transform.scale(img, (20, 20)) for img in boss_shoot_images]
+            self.images = [pygame.transform.scale(img, (30, 30)) for img in boss_shoot_images]
             self.index = 0
             self.animation_speed = 0.1
             self.image = self.images[int(self.index)]
             self.rect = self.image.get_rect(center=(x, y))
-            self.speed = 5  # Adjust bullet speed here
+            self.speed = 8  # Adjust bullet speed here
 
         def update(self):
             self.index += self.animation_speed
@@ -428,7 +448,6 @@ def play():
             self.rect.x -= self.speed
             if self.rect.right < 0:
                 self.kill()
-
 
     player = Player(health = 100, scale = .2)
     ant_enemy = Enemy(ant_image, .1, 4, 990, 420)
@@ -446,11 +465,8 @@ def play():
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
 
-
     boss_bullets = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
-
-
 
     # Define user events.
 
@@ -503,7 +519,7 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-                                        # Create the main game loop (level1).
+    # Create the main game loop (level1).
     running = True
     while running:
 
@@ -511,7 +527,7 @@ def play():
         clock.tick(frames_per_sec)
         window.fill(BLACK)
 
-                 # Update background based on level.
+        # Update background based on level.
         if current_level == 1:
             for i in range(0, tiles):
                 window.blit(background_image, (i * background_width + moving_speed, 30))
@@ -524,8 +540,6 @@ def play():
 
         elif current_level == 3:
             window.fill(BLACK)  # Level 3 background is black for now we can change that later
-
-
 
         # Draw the grid over the screen.
         grid()
@@ -594,7 +608,6 @@ def play():
         level_display = font.render(f"LEVEL: {current_level}", True, WHITE)
         window.blit(level_display, (10,70))
 
-
         # Level progression condition
         if collisions >= 10 and current_level == 1:
             current_level = 2
@@ -606,19 +619,14 @@ def play():
             all_sprites.add(boss_spider)
             boss_group.add(boss_spider)
 
-
         # Draw all our sprites
         for entity in all_sprites:
             window.blit(entity.image, entity.rect)
-
-        
 
         if current_level == 3:
             boss_group.update()
             boss_spider.draw_health(window)
             boss_bullets.draw(window)
-
-       
 
         for missile in player.missiles:
             missile.update()
@@ -636,12 +644,19 @@ def play():
                 player.missiles.remove(missile)
                 collisions += 1
 
-                    # Level progression condition
-            if collisions >= 10 and current_level == 1:
-                    current_level = 2
-                        
+            # Check for collision with boss spider
+            if current_level == 3 and pygame.sprite.spritecollide(missile, boss_group, False):
+                missile.kill()
+                missiles.remove(missile)
+                player.missiles.remove(missile)
+                # Reduce boss spider's health
+                boss_spider.health -= 10  # Adjust damage value as needed
 
-             
+                
+                if boss_spider.health <= 0:  # Check if boss spider is dead
+                    boss_spider.kill()
+                    boss_defeated = True
+                    running = False  # Exit the game loop to show victory screen
 
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollide(player, enemies, dokill = True):
@@ -652,13 +667,10 @@ def play():
         if pygame.sprite.spritecollide(player, bats, dokill = True):
             player.health -= 1  # Bat causes 1 damage
 
-       
-
         # Check if any boss bullets have collided with the player
-        if pygame.sprite.spritecollide(player1, boss_bullets, dokill=True):
+        if pygame.sprite.spritecollide(player, boss_bullets, dokill=True):
             # If so, subtract health.
-            player1.health -= 10  # Adjust damage from boss bullet here
-
+            player.health -= 30  # Adjust damage from boss bullet here
 
         # Check if any coins have been collected by the player
         coins_collected = pygame.sprite.spritecollide(player, coins, dokill = True)
@@ -679,38 +691,70 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-                                    # Create the final game-over page loop.
-    game_over_screen = True
+    # victory screen
+    if boss_defeated:
+        victory_screen = True
+        while victory_screen:
+            window.fill(GREEN)
+            # message on the screen 
+            congrats_text = font.render('Congratulations! You have survived the adventures of Hubert the game.', True, BLACK)
+            congrats_rect = congrats_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
+            window.blit(congrats_text, congrats_rect)
 
-    while game_over_screen:
+            
+            button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2, 100, 50)
+            pygame.draw.rect(window, BLACK, button_rect)
+            finish_text = font.render('Finish', True, WHITE)
+            finish_rect = finish_text.get_rect(center=button_rect.center)
+            window.blit(finish_text, finish_rect)
 
-        window.fill(RED)
-        window.blit(game_over_image, (375,150))
-        # Player killed and end game screen
+            
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == MOUSEBUTTONDOWN:
+                    if button_rect.collidepoint(event.pos):
+                        victory_screen = False
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        victory_screen = False
 
-        # Check all events.
-        for event in pygame.event.get():
-            # First define an exit strategy for the loop.
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    game_over_screen = False
-
-        if restart_button.draw():
-            play()
-
-        if exit_button.draw():
-            time.sleep(.5)
-            window.fill(BLACK)
-            window.blit(bye_img, (400,250))
             pygame.display.update()
-            time.sleep(1)
-            game_over_screen = False
 
-        pygame.display.update()
+    else:
+        
+        game_over_screen = True
+
+        while game_over_screen:
+
+            window.fill(RED)
+            window.blit(game_over_image, (375,150))
+            # Player killed and end game screen
+
+            # Check all events.
+            for event in pygame.event.get():
+                # First define an exit strategy for the loop.
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        game_over_screen = False
+
+            if restart_button.draw():
+                play()
+
+            if exit_button.draw():
+                time.sleep(.5)
+                window.fill(BLACK)
+                window.blit(bye_img, (400,250))
+                pygame.display.update()
+                time.sleep(1)
+                game_over_screen = False
+
+            pygame.display.update()
 
 play()
 
