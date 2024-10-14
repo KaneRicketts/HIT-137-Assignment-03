@@ -29,6 +29,8 @@ def play():
     ORANGE = (255, 165, 0)
     BROWN = (139, 69, 19)
 
+
+
     # Setting up the display.
     screen_width = 1000
     screen_height = 600
@@ -50,6 +52,9 @@ def play():
     coin_score = 0          # To keep score of collected coins
     current_level = 1       # To keep track of the current level
     boss_defeated = False   # Flag to indicate if boss is defeated
+
+    # *** Added: Heart Spawn Tracking ***
+    heart_spawned = {1: False, 2: False, 3: False}  # Tracks if heart has been spawned per level
 
     # Initializing Images
     # Button images
@@ -73,7 +78,7 @@ def play():
     level2_background_image = pygame.image.load("large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
     level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
 
-# Level 3 Background
+    # Level 3 Background
     level3_background_image = pygame.image.load("SpiderWebBackground.jpg").convert_alpha()
     level3_background_image = pygame.transform.scale(level3_background_image, (screen_width, screen_height))
 
@@ -159,6 +164,21 @@ def play():
         pygame.image.load("Bossshoot4.png").convert_alpha(),
     ]
 
+    # Heart Images 
+        
+    heart_scale = 0.2  # smaller or larger
+    heart_images = [
+        pygame.transform.scale(pygame.image.load("HP+1.1.png").convert_alpha(),
+                              (int(pygame.image.load("HP+1.1.png").get_width() * heart_scale),
+                               int(pygame.image.load("HP+1.1.png").get_height() * heart_scale))),
+        pygame.transform.scale(pygame.image.load("HP+1.2.png").convert_alpha(),
+                              (int(pygame.image.load("HP+1.2.png").get_width() * heart_scale),
+                               int(pygame.image.load("HP+1.2.png").get_height() * heart_scale))),
+        pygame.transform.scale(pygame.image.load("HP+1.3.png").convert_alpha(),
+                              (int(pygame.image.load("HP+1.3.png").get_width() * heart_scale),
+                               int(pygame.image.load("HP+1.3.png").get_height() * heart_scale)))
+    ]
+
     # Drawing a grid on window for later.
     grid_size = 50     # Tile size for 'square' grid overlay.
     def grid():
@@ -166,21 +186,25 @@ def play():
             pygame.draw.line(window, BLACK, (0, line*grid_size),(screen_width, line*grid_size), 2)
             pygame.draw.line(window, BLACK, (line*grid_size, 0),(line*grid_size, screen_width), 2)
 
-    # For later to add features to screen.
-    background_grid = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 12 rows of 20 columns
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # All zeros for now
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # Can be used for tile mapping
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # in the future
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
+    # *** Added: Heart Class ***
+    class Heart(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+            super(Heart, self).__init__()
+            self.images = heart_images
+            self.index = 0
+            self.animation_speed = 0.1
+            self.image = self.images[int(self.index)]
+            self.rect = self.image.get_rect(center=(x, y))
+            self.speed = 2  # Speed of the heart movement
+
+        def update(self):
+            self.index += self.animation_speed
+            if self.index >= len(self.images):
+                self.index = 0
+            self.image = self.images[int(self.index)]
+            self.rect.move_ip(-self.speed, 0)
+            if self.rect.right < 0:
+                self.kill()
 
     # Define all the classes:
     class Buttons():
@@ -365,7 +389,7 @@ def play():
             self.health = health  # Adjust the health of the boss spider here
             self.direction = random.choice(['up', 'down', 'left', 'right'])
             self.last_shot = pygame.time.get_ticks()
-            self.shoot_cooldown = 3000  # Boss shoots every 5 seconds
+            self.shoot_cooldown = 3000  # Boss shoots every 3 seconds
             self.move_timer = pygame.time.get_ticks()
             self.move_delay = 1000  # Change direction every 1 second
 
@@ -453,15 +477,16 @@ def play():
             if self.rect.right < 0:
                 self.kill()
 
+   
     player = Player(health = 100, scale = .2)
     ant_enemy = Enemy(ant_image, .1, 4, 990, 420)
 
+   
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
     exit_button = Buttons(510,435, exit_button_img, scale = 0.5)
     restart_button = Buttons(130, 435, restart_button_img, scale = 0.5)
 
-    # Create groups for enemy(ies)
-
+    # Create groups for enemies, missiles, coins, bats, etc.
     enemies = pygame.sprite.Group()
     missiles = pygame.sprite.Group()
     coins = pygame.sprite.Group()
@@ -471,6 +496,9 @@ def play():
 
     boss_bullets = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
+
+    # Heart Group 
+    hearts = pygame.sprite.Group()
 
     # Define user events.
 
@@ -482,6 +510,12 @@ def play():
 
     add_bat = pygame.USEREVENT + 3
     pygame.time.set_timer(add_bat, 5000)
+
+    # Heart Spawn
+    add_heart = pygame.USEREVENT + 4
+
+    # Heart spawns at 10 seconds
+    pygame.time.set_timer(add_heart, 10000)
 
     # Start the Loops
     # Create the start page loop.
@@ -592,14 +626,35 @@ def play():
                     bats.add(bat)
                     all_sprites.add(bat)
 
+           
+            elif event.type == add_heart and current_level <= 3 and not heart_spawned[current_level]:
+                # Spawn the heart at the middle of the screen moving from right to left
+                heart = Heart(screen_width + 50, screen_height // 2)
+                hearts.add(heart)
+                all_sprites.add(heart)
+                heart_spawned[current_level] = True  # Ensure heart spawns only once per level
+
         # Player "update()" call.
         player.move()
 
-        # Update the position of our enemies, coins, and bats.
+        # Update the position of our enemies, coins, bats, and hearts.
         enemies.update()
         coins.update()
         bats.update()
         boss_bullets.update()
+        hearts.update()  
+
+        # Update boss group if level 3
+        if current_level == 3 and not boss_group:
+            # Initialize the boss spider
+            boss_spider = BossSpider(health=100, speed=3, scale=0.5)  # Adjust speed and scale here
+            all_sprites.add(boss_spider)
+            boss_group.add(boss_spider)
+
+        if current_level == 3:
+            boss_group.update()
+            boss_spider.draw_health(window)
+            boss_bullets.draw(window)
 
         # Add a Scorecard/healthbar/etc here
         player.draw_health(window)
@@ -615,48 +670,46 @@ def play():
         # Level progression condition
         if collisions >= 10 and current_level == 1:
             current_level = 2
+            heart_spawned[current_level] = False  # Reset heart spawn for new level
 
         elif collisions >= 20 and current_level == 2:
             current_level = 3
-            # Initialize the boss spider
-            boss_spider = BossSpider(health=100, speed=3, scale=0.5)  # Adjust speed and scale here
-            all_sprites.add(boss_spider)
-            boss_group.add(boss_spider)
+            heart_spawned[current_level] = False  # Reset heart spawn for new level
 
         # Draw all our sprites
         for entity in all_sprites:
             window.blit(entity.image, entity.rect)
 
-        if current_level == 3:
-            boss_group.update()
-            boss_spider.draw_health(window)
-            boss_bullets.draw(window)
+        # *** Added: Draw Hearts ***
+        hearts.draw(window)
 
-        for missile in player.missiles:
+        # *** Added: Check for heart collection ***
+        heart_collisions = pygame.sprite.spritecollide(player, hearts, dokill=True)
+        if heart_collisions:
+            player.health = 100  # Restore player health to full
+
+        # Check for missile collisions with enemies
+        for missile in player.missiles[:]:
             missile.update()
             missiles.add(missile)
             if pygame.sprite.spritecollide(missile, enemies, True):
                 missile.kill()
-                missiles.remove(missile)
                 player.missiles.remove(missile)
                 collisions += 1
 
             # Check for collision with bats
             if pygame.sprite.spritecollide(missile, bats, True):
                 missile.kill()
-                missiles.remove(missile)
                 player.missiles.remove(missile)
                 collisions += 1
 
             # Check for collision with boss spider
             if current_level == 3 and pygame.sprite.spritecollide(missile, boss_group, False):
                 missile.kill()
-                missiles.remove(missile)
                 player.missiles.remove(missile)
                 # Reduce boss spider's health
                 boss_spider.health -= 10  # Adjust damage value as needed
 
-                
                 if boss_spider.health <= 0:  # Check if boss spider is dead
                     boss_spider.kill()
                     boss_defeated = True
@@ -681,6 +734,7 @@ def play():
         if coins_collected:
             coin_score += len(coins_collected)
 
+
         if player.health <= 0:
             for entity in all_sprites:
                 entity.kill()
@@ -695,7 +749,7 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-    # victory screen
+    # *** Added: Victory screen ***
     if boss_defeated:
         victory_screen = True
         while victory_screen:
@@ -705,14 +759,12 @@ def play():
             congrats_rect = congrats_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
             window.blit(congrats_text, congrats_rect)
 
-            
             button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2, 100, 50)
             pygame.draw.rect(window, BLACK, button_rect)
             finish_text = font.render('Finish', True, WHITE)
             finish_rect = finish_text.get_rect(center=button_rect.center)
             window.blit(finish_text, finish_rect)
 
-            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
