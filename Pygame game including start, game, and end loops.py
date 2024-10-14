@@ -73,6 +73,10 @@ def play():
     level2_background_image = pygame.image.load("large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
     level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
 
+# Level 3 Background
+    level3_background_image = pygame.image.load("SpiderWebBackground.jpg").convert_alpha()
+    level3_background_image = pygame.transform.scale(level3_background_image, (screen_width, screen_height))
+
     # Game-Over Background
     end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
     end_rect = end_background_image.get_rect()
@@ -129,22 +133,22 @@ def play():
 
     # Spider Up images
     spider_up_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_6.png').convert_alpha(),
+        pygame.image.load("Spider_Up_1.png").convert_alpha(),
+        pygame.image.load("Spider_Up_2.png").convert_alpha(),
+        pygame.image.load("Spider_Up_3.png").convert_alpha(),
+        pygame.image.load("Spider_Up_4.png").convert_alpha(),
+        pygame.image.load("Spider_Up_5.png").convert_alpha(),
+        pygame.image.load("Spider_Up_6.png").convert_alpha(),
     ]
 
     # Spider Right images
     spider_right_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_6.png').convert_alpha(),
+        pygame.image.load("Spider_Right_1.png").convert_alpha(),
+        pygame.image.load("Spider_Right_2.png").convert_alpha(),
+        pygame.image.load("Spider_Right_3.png").convert_alpha(),
+        pygame.image.load("Spider_Right_4.png").convert_alpha(),
+        pygame.image.load("Spider_Right_5.png").convert_alpha(),
+        pygame.image.load("Spider_Right_6.png").convert_alpha(),
     ]
 
     # Boss shooting images
@@ -353,7 +357,7 @@ def play():
 
             self.images = self.images_down
             self.index = 0
-            self.animation_speed = 0.2
+            self.animation_speed = 0.3
             self.image = self.images[int(self.index)]
             self.rect = self.image.get_rect()
             self.rect.center = (screen_width - 100, screen_height // 2)  # Start at right side of screen
@@ -539,7 +543,7 @@ def play():
             window.blit(level2_background_image, (0, 0))  # No need for tiling if the image fits the screen
 
         elif current_level == 3:
-            window.fill(BLACK)  # Level 3 background is black for now we can change that later
+            window.blit(level3_background_image, (0, 0))  # Level 3 background 
 
         # Draw the grid over the screen.
         grid()
