@@ -63,8 +63,17 @@ def play():
     start_button_img = pygame.image.load("START.png").convert_alpha()
     exit_button_img = pygame.image.load("EXIT.png").convert_alpha()
     restart_button_img = pygame.image.load("RESTART.png").convert_alpha()
-    # Enemy images
-    ant_image = pygame.image.load("Ant.png").convert_alpha()
+
+    # Ant pictures
+    ant_walk_images = [
+        pygame.image.load("Ant1.png").convert_alpha(),
+        pygame.image.load("Ant2.png").convert_alpha(),
+        pygame.image.load("Ant3.png").convert_alpha(),
+        pygame.image.load("Ant4.png").convert_alpha(),
+        pygame.image.load("Ant5.png").convert_alpha(),
+        pygame.image.load("Ant6.png").convert_alpha(),
+    ]
+    
     # Backgrounds
     # Start Background
     start_background_image = pygame.image.load("cave.jpg").convert_alpha()
@@ -104,7 +113,8 @@ def play():
     ]
 
     # Load bat animation 
-    bat_scale = 0.6  # make the bat smaller or larger
+   
+    bat_scale = 0.75  # make the bat bigger
     bat_images = [
         pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
         pygame.transform.scale(pygame.image.load("bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
@@ -115,7 +125,8 @@ def play():
         pygame.transform.scale(pygame.image.load("bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
         pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
-
+   
+    
     # Boss Spider Images
 
     # Spider Down images
@@ -187,7 +198,7 @@ def play():
             pygame.draw.line(window, BLACK, (0, line*grid_size),(screen_width, line*grid_size), 2)
             pygame.draw.line(window, BLACK, (line*grid_size, 0),(line*grid_size, screen_width), 2)
 
-    # *** Added: Heart Class ***
+    # Heart Class 
     class Heart(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Heart, self).__init__()
@@ -206,6 +217,29 @@ def play():
             self.rect.move_ip(-self.speed, 0)
             if self.rect.right < 0:
                 self.kill()
+   
+
+   # Moving Ant
+    class AnimatedAnt(pygame.sprite.Sprite):
+        def __init__(self, images, scale, speed, x, y):
+            super(AnimatedAnt, self).__init__()
+            # Scale all images 
+            self.images = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in images]
+            self.index = 0
+            self.animation_speed = 0.1  # Adjust speed as needed
+            self.image = self.images[self.index]
+            self.rect = self.image.get_rect(center=(x, y))
+            self.speed = speed
+
+        def update(self):
+            self.index += self.animation_speed
+            if self.index >= len(self.images):
+                self.index = 0
+            self.image = self.images[int(self.index)]
+            self.rect.move_ip(-self.speed, 0)
+            if self.rect.right < 0:
+                self.kill()
+   
 
     # Define all the classes:
     class Buttons():
@@ -388,7 +422,8 @@ def play():
             if self.rect.right < 0:
                 self.kill()
 
-    # Boss Spider class
+    # Boss Spider 
+    
     class BossSpider(pygame.sprite.Sprite):
         def __init__(self, health, speed, scale):
             super(BossSpider, self).__init__()
@@ -473,6 +508,7 @@ def play():
             rect = (round(inner_position[0]), round(inner_position[1]), round(inner_rect[0]), round(inner_rect[1]))
             pygame.draw.rect(surface, health_colour, rect)
 
+
     # Boss bullet 
     class BossBullet(pygame.sprite.Sprite):
         def __init__(self, x, y):
@@ -496,10 +532,10 @@ def play():
             if self.rect.right < 0:
                 self.kill()
 
-   
-    player = Player(health = 100, scale = .2)
-    ant_enemy = Enemy(ant_image, .1, 4, 990, 420)
 
+    
+    player = Player(health = 100, scale = .2)
+    
    
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
     exit_button = Buttons(510,435, exit_button_img, scale = 0.5)
@@ -522,7 +558,9 @@ def play():
     # Define user events.
 
     add_enemy = pygame.USEREVENT + 1
-    pygame.time.set_timer(add_enemy, 500)
+ 
+    pygame.time.set_timer(add_enemy, 1000)  # HOW OFTEN THE ANTS APPEAR
+   
 
     add_coin = pygame.USEREVENT + 2
     pygame.time.set_timer(add_coin, 3000)
@@ -576,7 +614,78 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-    # Create the main game loop (level1).
+    # Informational Screen 
+
+    info_loop = True
+    info_start_time = pygame.time.get_ticks()  # Record the start time
+
+  
+    standard_width = 100
+    standard_height = 100
+
+    # Scale enemy images 
+    ant_info_img = pygame.transform.scale(ant_walk_images[0], (standard_width, standard_height))
+    bat_info_img = pygame.transform.scale(bat_images[0], (standard_width, standard_height))
+
+    # Scale coin and heart images 
+    coin_info_img = pygame.transform.scale(walkCoin[0], (standard_width, standard_height))
+    heart_info_img = pygame.transform.scale(heart_images[0], (standard_width, standard_height))
+
+    # text for the info screen
+    info_text1 = font_large.render("Watch out for these cave creatures that live in the cave.", True, WHITE)
+    info_text2 = font.render("Be on the look out for the BOSS:", True, WHITE)
+
+    while info_loop:
+        window.fill(BLACK)  # Background color for info screen
+
+        
+        window.blit(info_text1, (50, 50))
+        window.blit(info_text2, (50, 500))
+
+        spacing = 50
+        total_width = 4 * standard_width + 3 * spacing
+        start_x = (screen_width - total_width) // 2
+        y_position = 150  # Y position for the images
+
+        # Blit enemy and goodies images in a row
+        window.blit(ant_info_img, (start_x, y_position))
+        window.blit(bat_info_img, (start_x + standard_width + spacing, y_position))
+        window.blit(coin_info_img, (start_x + 2 * (standard_width + spacing), y_position))
+        window.blit(heart_info_img, (start_x + 3 * (standard_width + spacing), y_position))
+
+        #add labels below images
+        label_y_offset = 100  # Pixels below the images
+
+        ant_label = font.render("Ant Enemy", True, WHITE)
+        bat_label = font.render("Bat Enemy", True, WHITE)
+        coin_label = font.render("Coins (Treasure)", True, WHITE)
+        heart_label = font.render("Hearts (Health)", True, WHITE)
+
+        window.blit(ant_label, (start_x + (standard_width - ant_label.get_width()) // 2, y_position + standard_height + 10))
+        window.blit(bat_label, (start_x + standard_width + spacing + (standard_width - bat_label.get_width()) // 2, y_position + standard_height + 10))
+        window.blit(coin_label, (start_x + 2 * (standard_width + spacing) + (standard_width - coin_label.get_width()) // 2, y_position + standard_height + 10))
+        window.blit(heart_label, (start_x + 3 * (standard_width + spacing) + (standard_width - heart_label.get_width()) // 2, y_position + standard_height + 10))
+
+       
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+        # Check if 5 seconds have passed
+        current_time = pygame.time.get_ticks()
+        if current_time - info_start_time > 5000:
+            info_loop = False
+
+        # Update the display
+        pygame.display.update()
+  
+
+    
     running = True
     while running:
 
@@ -626,10 +735,11 @@ def play():
 
             # Is the time right for a new enemy.
             elif event.type == add_enemy and current_level < 3:
-                # Create the new enemy every 500 milliseconds, and add it to our sprite groups.
-                ant_enemy = Enemy(ant_image, .1, 5, 990, 420)
+                
+                ant_enemy = AnimatedAnt(ant_walk_images, scale=0.3, speed=5, x=990, y=420) 
                 enemies.add(ant_enemy)
                 all_sprites.add(ant_enemy)
+              
 
             # Is the time right for a new coin.
             elif event.type == add_coin and current_level < 3:
@@ -669,8 +779,11 @@ def play():
 
         # Update boss group if level 3
         if current_level == 3 and not boss_group:
-            # Initialize the boss spider
-            boss_spider = BossSpider(health=100, speed=3, scale=0.5)  # Adjust speed and scale here
+
+           # Increase boss spider scale 
+            boss_spider = BossSpider(health=120, speed=4, scale=1.0) 
+
+           
             all_sprites.add(boss_spider)
             boss_group.add(boss_spider)
 
@@ -822,7 +935,7 @@ def play():
                     if event.key == K_ESCAPE:
                         game_over_screen = False
 
-            
+
             if restart_button.draw():
                 play()
 
