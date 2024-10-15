@@ -29,7 +29,9 @@ def play():
     ORANGE = (255, 165, 0)
     BROWN = (139, 69, 19)
 
-
+    # Gravity 
+    GRAVITY = 0.5       # Adjust this value to control gravity strength
+    JUMP_VELOCITY = -10 # Adjust this value to control jump height
 
     # Setting up the display.
     screen_width = 1000
@@ -165,7 +167,6 @@ def play():
     ]
 
     # Heart Images 
-        
     heart_scale = 0.2  # smaller or larger
     heart_images = [
         pygame.transform.scale(pygame.image.load("HP+1.1.png").convert_alpha(),
@@ -252,10 +253,15 @@ def play():
             height = self.image.get_height()
             self.image = pygame.transform.scale(self.image, ((int(width * scale)), (int(height * scale))))
             self.rect = self.image.get_rect()
+            self.rect.bottom = 420  # Start on the ground
             self.missiles = []
             self.health = health
             self.jumping = False
             self.velocity = [0, 0]
+
+            # Jumping and Gravity
+            self.vel_y = 0
+            self.is_jumping = False
 
         def move(self):
             pressed_keys = pygame.key.get_pressed()
@@ -270,15 +276,27 @@ def play():
             if pressed_keys[K_RIGHT]:
                 self.rect.move_ip(5, 0)
 
-            # Ensure the player never leaves the screen.
+            # Apply Gravity
+            self.vel_y += GRAVITY
+            self.rect.y += self.vel_y
+
+            # Ensure the player never leaves the screen vertically.
+            if self.rect.bottom >= 420:
+                self.rect.bottom = 420
+                self.vel_y = 0
+                self.is_jumping = False
+
+            # Ensure the player never leaves the screen horizontally.
             if self.rect.left < 0:
                 self.rect.left = 0
             elif self.rect.right > screen_width:
                 self.rect.right = screen_width
-            if self.rect.top <= 0:
-                self.rect.top = 0
-            elif self.rect.bottom >= 420:
-                self.rect.bottom = 420
+
+        #Jump Method
+        def jump(self):
+            if not self.is_jumping:
+                self.vel_y = JUMP_VELOCITY
+                self.is_jumping = True
 
         # HealthBar
         def health_bar(self, surface, position, size, border_colour, background_colour, health_colour, remaining_health):
@@ -295,6 +313,7 @@ def play():
             max_health = 100
             self.health_bar(surf, health_rect.topleft, health_rect.size, BLACK, RED, GREEN, self.health/max_health)
 
+        # Shoot to F key
         def shoot(self):
             missile = Weapon(self.rect.centerx, self.rect.bottom)
             self.missiles.append(missile)
@@ -596,8 +615,13 @@ def play():
                 # Was it the Escape key? If so, stop the loop.
                 if event.key == K_ESCAPE:
                     running = False
-                # Was it the Space key? If so, player shoots weapon.
+
+                # Spacebar to jump
                 if event.key == K_SPACE:
+                    player.jump()
+
+                # Fire Gun F
+                if event.key == K_f:
                     player.shoot()
 
             # Is the time right for a new enemy.
@@ -626,7 +650,6 @@ def play():
                     bats.add(bat)
                     all_sprites.add(bat)
 
-           
             elif event.type == add_heart and current_level <= 3 and not heart_spawned[current_level]:
                 # Spawn the heart at the middle of the screen moving from right to left
                 heart = Heart(screen_width + 50, screen_height // 2)
@@ -680,10 +703,10 @@ def play():
         for entity in all_sprites:
             window.blit(entity.image, entity.rect)
 
-        # *** Added: Draw Hearts ***
+       
         hearts.draw(window)
 
-        # *** Added: Check for heart collection ***
+       
         heart_collisions = pygame.sprite.spritecollide(player, hearts, dokill=True)
         if heart_collisions:
             player.health = 100  # Restore player health to full
@@ -749,7 +772,7 @@ def play():
         # Update the display for each loop.
         pygame.display.update()
 
-    # *** Added: Victory screen ***
+    # Victory screen
     if boss_defeated:
         victory_screen = True
         while victory_screen:
@@ -799,6 +822,7 @@ def play():
                     if event.key == K_ESCAPE:
                         game_over_screen = False
 
+            
             if restart_button.draw():
                 play()
 
