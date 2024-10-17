@@ -281,34 +281,59 @@ def play():
     class Player(pygame.sprite.Sprite):
         def __init__(self, health, scale):
             super(Player, self).__init__()
-            self.image = pygame.image.load("hubert.png").convert_alpha()
-            self.image.set_colorkey(WHITE)
-            width = self.image.get_width()
-            height = self.image.get_height()
-            self.image = pygame.transform.scale(self.image, ((int(width * scale)), (int(height * scale))))
+            
+            # Hubert Pics location
+            self.images = [
+                pygame.image.load("hubert1.png").convert_alpha(),
+                pygame.image.load("hubert2.png").convert_alpha(),
+                pygame.image.load("hubert3.png").convert_alpha(),
+                pygame.image.load("hubert4.png").convert_alpha(),
+                pygame.image.load("hubert5.png").convert_alpha(),
+                pygame.image.load("hubert6.png").convert_alpha()
+            ]
+            
+           
+            self.images = [
+                pygame.transform.scale(img, (
+                    int(img.get_width() * scale), 
+                    int(img.get_height() * scale)
+                )) for img in self.images
+            ]
+            self.index = 0
+            self.image = self.images[self.index]
             self.rect = self.image.get_rect()
             self.rect.bottom = 420  # Start on the ground
+            
+           
+            self.animation_speed = 0.15  # speed of the picture for hubert
+            self.animation_timer = 0  
+            self.is_moving = False  
             self.missiles = []
             self.health = health
             self.jumping = False
             self.velocity = [0, 0]
-
+            
             # Jumping and Gravity
             self.vel_y = 0
             self.is_jumping = False
 
         def move(self):
             pressed_keys = pygame.key.get_pressed()
-            upwards_movement = 0
+            self.is_moving = False  # Reset movement flag each frame
+            
             # Move the sprite based on keyboard input.
             if pressed_keys[K_UP]:
                 self.rect.move_ip(0, -5)
+                self.is_moving = True
             if pressed_keys[K_DOWN]:
-                self.rect.move_ip(0,5)
+                self.rect.move_ip(0, 5)
+                self.is_moving = True
             if pressed_keys[K_LEFT]:
                 self.rect.move_ip(-5, 0)
+                self.is_moving = True
             if pressed_keys[K_RIGHT]:
                 self.rect.move_ip(5, 0)
+                self.is_moving = True
 
             # Apply Gravity
             self.vel_y += GRAVITY
@@ -326,7 +351,19 @@ def play():
             elif self.rect.right > screen_width:
                 self.rect.right = screen_width
 
-        #Jump Method
+           
+            if self.is_moving:
+                self.animation_timer += self.animation_speed
+                if self.animation_timer >= len(self.images):
+                    self.animation_timer = 0
+                self.index = int(self.animation_timer)
+                self.image = self.images[self.index]
+            else:
+                # If not moving, reset to the first image
+                self.index = 0
+                self.image = self.images[self.index]
+
+        # Jump Method
         def jump(self):
             if not self.is_jumping:
                 self.vel_y = JUMP_VELOCITY
@@ -534,7 +571,7 @@ def play():
 
 
     
-    player = Player(health = 100, scale = .2)
+    player = Player(health = 100, scale = 0.5)  # make hubert bigger
     
    
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
@@ -619,7 +656,7 @@ def play():
     info_loop = True
     info_start_time = pygame.time.get_ticks()  # Record the start time
 
-  
+
     standard_width = 100
     standard_height = 100
 
