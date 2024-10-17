@@ -3,6 +3,7 @@ from pygame.locals import *
 import sys
 import random
 import time
+import os
 
 pygame.init()       # This initializes all the imported pygame modules.
 
@@ -75,8 +76,11 @@ def play():
     ]
     
     # Backgrounds
-    # Start Background
-    start_background_image = pygame.image.load("cave.jpg").convert_alpha()
+    start_background_image = pygame.image.load("You Found a Cave2.png").convert_alpha()
+    start_rect = start_background_image.get_rect()
+
+    # background to fit the screen
+    start_background_image = pygame.transform.scale(start_background_image, (screen_width, screen_height))
     start_rect = start_background_image.get_rect()
 
     # Game Background - Example only.
@@ -86,20 +90,37 @@ def play():
     tiles = 3       # How many game background images for smooth screen movement.
  
      # Level 2 Background
-    level2_background_image = pygame.image.load("large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
-    level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
+    level2_background_image = pygame.image.load("Background 2.png").convert_alpha()
+    level2_background_width = level2_background_image.get_width()
+    level2_background_height = level2_background_image.get_height()
 
     # Level 3 Background
-    level3_background_image = pygame.image.load("SpiderWebBackground.jpg").convert_alpha()
-    level3_background_image = pygame.transform.scale(level3_background_image, (screen_width, screen_height))
+    spider_boss_background_image = pygame.image.load("Spider boss background.png").convert_alpha()
+    spider_boss_background_image = pygame.transform.scale(spider_boss_background_image, (screen_width, screen_height))
 
     # Game-Over Background
-    end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
-    end_rect = end_background_image.get_rect()
+    you_died_background_image = pygame.image.load("You died background.png").convert_alpha()
+    you_died_rect = you_died_background_image.get_rect()
+    
+    you_died_background_image = pygame.transform.scale(you_died_background_image, (screen_width, screen_height))
+    you_died_rect = you_died_background_image.get_rect()
+
     # Text Images
     bye_img = font_large.render("See you next time", True, PURPLE)
     game_over_image = font_large.render("...GAME OVER...", True, BLUE)
     game_start_image = font_large.render("ADVENTURES OF HUBERT THE GAME", True, BLUE)
+
+    # Level 1 to 3 Transition Images
+    all_levels_image = pygame.image.load("All levels.png").convert_alpha()
+    level1_done_image = pygame.image.load("Level 1 done.png").convert_alpha()
+    level2_done_image = pygame.image.load("Level 2 done.png").convert_alpha()
+    level3_done_image = pygame.image.load("Level 3 done.png").convert_alpha()
+
+    # images to fit the screen
+    all_levels_image = pygame.transform.scale(all_levels_image, (screen_width, screen_height))
+    level1_done_image = pygame.transform.scale(level1_done_image, (screen_width, screen_height))
+    level2_done_image = pygame.transform.scale(level2_done_image, (screen_width, screen_height))
+    level3_done_image = pygame.transform.scale(level3_done_image, (screen_width, screen_height))
 
     # Load coin animation 
     coin_scale = 0.4  # make the coin smaller or larger
@@ -113,7 +134,7 @@ def play():
     ]
 
     # Load bat animation 
-   
+    
     bat_scale = 0.75  # make the bat bigger
     bat_images = [
         pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
@@ -197,6 +218,12 @@ def play():
         for line in range(0, 20):
             pygame.draw.line(window, BLACK, (0, line*grid_size),(screen_width, line*grid_size), 2)
             pygame.draw.line(window, BLACK, (line*grid_size, 0),(line*grid_size, screen_width), 2)
+
+    # Function to display level transition screens
+    def show_level_screen(image):
+        window.blit(image, (0,0))
+        pygame.display.update()
+        time.sleep(2)  # change this to speed up images changes
 
     # Heart Class 
     class Heart(pygame.sprite.Sprite):
@@ -317,7 +344,7 @@ def play():
             self.vel_y = 0
             self.is_jumping = False
 
-        def move(self):
+        def move(self, current_level):
             pressed_keys = pygame.key.get_pressed()
             self.is_moving = False  # Reset movement flag each frame
             
@@ -339,11 +366,22 @@ def play():
             self.vel_y += GRAVITY
             self.rect.y += self.vel_y
 
-            # Ensure the player never leaves the screen vertically.
-            if self.rect.bottom >= 420:
-                self.rect.bottom = 420
-                self.vel_y = 0
-                self.is_jumping = False
+            
+            if current_level in [1, 2]:
+                # Ensure the player never leaves the screen vertically on level 1 and 2
+                if self.rect.bottom >= 420:
+                    self.rect.bottom = 420
+                    self.vel_y = 0
+                    self.is_jumping = False
+            elif current_level == 3:
+                # In Level 3, ensure the player stays within the screen boundaries.
+                if self.rect.bottom >= screen_height:
+                    self.rect.bottom = screen_height
+                    self.vel_y = 0
+                    self.is_jumping = False
+                if self.rect.top <= 0:
+                    self.rect.top = 0
+                    self.vel_y = 0
 
             # Ensure the player never leaves the screen horizontally.
             if self.rect.left < 0:
@@ -573,7 +611,6 @@ def play():
     
     player = Player(health = 100, scale = 0.5)  # make hubert bigger
     
-   
     start_button = Buttons(130, 435, start_button_img, scale = 0.5)
     exit_button = Buttons(510,435, exit_button_img, scale = 0.5)
     restart_button = Buttons(130, 435, restart_button_img, scale = 0.5)
@@ -597,7 +634,8 @@ def play():
     add_enemy = pygame.USEREVENT + 1
  
     pygame.time.set_timer(add_enemy, 1000)  # HOW OFTEN THE ANTS APPEAR
-   
+    
+
 
     add_coin = pygame.USEREVENT + 2
     pygame.time.set_timer(add_coin, 3000)
@@ -617,8 +655,8 @@ def play():
     while start_loop:
         window.fill(WHITE)
 
-        # Draw the background image to the screen.
-        window.blit(start_background_image, (260, 100))
+       
+        window.blit(start_background_image, (0, 0))  # Background image
 
         window.blit(game_start_image, (175,30))
 
@@ -713,7 +751,7 @@ def play():
                     pygame.quit()
                     sys.exit()
 
-        # Check if 5 seconds have passed
+        # Check if 5 seconds have passed to move to next screen 
         current_time = pygame.time.get_ticks()
         if current_time - info_start_time > 5000:
             info_loop = False
@@ -721,8 +759,8 @@ def play():
         # Update the display
         pygame.display.update()
   
+    show_level_screen(all_levels_image)
 
-    
     running = True
     while running:
 
@@ -739,10 +777,15 @@ def play():
                 moving_speed = 0
 
         elif current_level == 2:
-            window.blit(level2_background_image, (0, 0))  # No need for tiling if the image fits the screen
+            
+            for i in range(0, tiles):
+                window.blit(level2_background_image, (i * level2_background_width + moving_speed, -75))
+            moving_speed -= .5
+            if abs(moving_speed) > level2_background_width:
+                moving_speed = 0
 
         elif current_level == 3:
-            window.blit(level3_background_image, (0, 0))  # Level 3 background 
+            window.blit(spider_boss_background_image, (0, 0))  # Level 3 boss background 
 
         # Draw the grid over the screen.
         grid()
@@ -804,8 +847,7 @@ def play():
                 all_sprites.add(heart)
                 heart_spawned[current_level] = True  # Ensure heart spawns only once per level
 
-        # Player "update()" call.
-        player.move()
+        player.move(current_level)  
 
         # Update the position of our enemies, coins, bats, and hearts.
         enemies.update()
@@ -816,11 +858,9 @@ def play():
 
         # Update boss group if level 3
         if current_level == 3 and not boss_group:
-
-           # Increase boss spider scale 
+            # Increase boss spider scale 
             boss_spider = BossSpider(health=120, speed=4, scale=1.0) 
 
-           
             all_sprites.add(boss_spider)
             boss_group.add(boss_spider)
 
@@ -840,14 +880,18 @@ def play():
         level_display = font.render(f"LEVEL: {current_level}", True, WHITE)
         window.blit(level_display, (10,70))
 
+       
         # Level progression condition
         if collisions >= 10 and current_level == 1:
             current_level = 2
             heart_spawned[current_level] = False  # Reset heart spawn for new level
+            show_level_screen(level1_done_image)
 
         elif collisions >= 20 and current_level == 2:
             current_level = 3
             heart_spawned[current_level] = False  # Reset heart spawn for new level
+            show_level_screen(level2_done_image)
+            player.rect.bottom = screen_height  
 
         # Draw all our sprites
         for entity in all_sprites:
@@ -887,6 +931,7 @@ def play():
                     boss_spider.kill()
                     boss_defeated = True
                     running = False  # Exit the game loop to show victory screen
+                    show_level_screen(level3_done_image)
 
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollide(player, enemies, dokill = True):
@@ -909,30 +954,47 @@ def play():
 
 
         if player.health <= 0:
+            
             for entity in all_sprites:
                 entity.kill()
             player.health = 100
             time.sleep(0.5)
-            window.fill(RED)
-            window.blit(game_over_image, (375,250))
+            window.blit(you_died_background_image, (0,0))  
+            
+            # You Died text in the middle of the screen 
+            death_text = font_large.render("You Died!", True, RED)
+            death_text_rect = death_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
+            window.blit(death_text, death_text_rect)
+
+            prompt_text = font.render("What would you like to do?", True, WHITE)
+            prompt_text_rect = prompt_text.get_rect(center=(screen_width // 2, screen_height // 2))
+            window.blit(prompt_text, prompt_text_rect)
+
             pygame.display.update()
-            time.sleep(1)
+            time.sleep(1.5)
             running = False
 
         # Update the display for each loop.
         pygame.display.update()
 
-    # Victory screen
+   
     if boss_defeated:
         victory_screen = True
         while victory_screen:
-            window.fill(GREEN)
-            # message on the screen 
-            congrats_text = font.render('Congratulations! You have survived the adventures of Hubert the game.', True, BLACK)
-            congrats_rect = congrats_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
-            window.blit(congrats_text, congrats_rect)
+        
+            cave_exit_background = pygame.image.load("Cave Exit.png").convert_alpha()
+            cave_exit_background = pygame.transform.scale(cave_exit_background, (screen_width, screen_height))  
+            window.blit(cave_exit_background, (0,0))  
 
-            button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2, 100, 50)
+            
+            congrats_text1 = font_large.render('You have survived the cave', True, BLACK)
+            congrats_text2 = font_large.render("Now enjoy that treasure.", True, BLACK)
+            congrats_rect1 = congrats_text1.get_rect(center=(screen_width // 2, 250))  # Top of the screen
+            congrats_rect2 = congrats_text2.get_rect(center=(screen_width // 2, 300))  # Below the first line
+            window.blit(congrats_text1, congrats_rect1)
+            window.blit(congrats_text2, congrats_rect2)
+
+            button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2 + 50, 100, 50)
             pygame.draw.rect(window, BLACK, button_rect)
             finish_text = font.render('Finish', True, WHITE)
             finish_rect = finish_text.get_rect(center=button_rect.center)
@@ -957,8 +1019,16 @@ def play():
 
         while game_over_screen:
 
-            window.fill(RED)
-            window.blit(game_over_image, (375,150))
+            window.blit(you_died_background_image, (0,0))  
+
+            death_text = font_large.render("You Died!", True, RED)
+            death_text_rect = death_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
+            window.blit(death_text, death_text_rect)
+
+            prompt_text = font.render("What would you like to do?", True, WHITE)
+            prompt_text_rect = prompt_text.get_rect(center=(screen_width // 2, screen_height // 2))
+            window.blit(prompt_text, prompt_text_rect)
+
             # Player killed and end game screen
 
             # Check all events.
@@ -973,6 +1043,7 @@ def play():
                         game_over_screen = False
 
 
+            # Restart and Exit buttons
             if restart_button.draw():
                 play()
 
