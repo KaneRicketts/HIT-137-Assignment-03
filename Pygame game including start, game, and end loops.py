@@ -1,71 +1,63 @@
-import pygame
-from pygame.locals import *
-import sys
-import random
-import time
-import os
+import pygame  
+from pygame.locals import *  
+import sys  
+import random  
+import time  
+import os  
 
-pygame.init()       # This initializes all the imported pygame modules.
+pygame.init()  # Start pygame so we can use it
 
-# To ensure we can replay the game, we insert everything into a function.
-# When RESTART is clicked, we just call the function.
-
+# To play the game again, we put everything in a function called play
 def play():
-    # Initializing color variables for common colors.
+    
+    RED = (255, 0, 0)            
+    PINK = (255, 20, 147)        
+    GREEN = (0, 255, 0)          
+    DARKGREEN = (0, 100, 0)      
+    BLUE = (0, 0, 255)          
+    SKYBLUE = (0, 191, 255)      
+    CYAN = (0, 255, 255)         
+    BLACK = (0, 0, 0)            
+    GRAY = (128, 128, 128)       
+    LIGHTGRAY = (211, 211, 211)  
+    WHITE = (255, 255, 255)      
+    MAGENTA = (255, 0, 255)      
+    PURPLE = (128, 0, 128)       
+    GOLD = (255, 215, 0)         
+    BROWN = (139, 69, 19)        
 
-    RED   = (255, 0, 0)
-    PINK = (255, 20, 147)
-    GREEN = (0, 255, 0)
-    DARKGREEN = (0, 100, 0)
-    BLUE  = (0, 0, 255)
-    SKYBLUE = (0, 191, 255)
-    CYAN = (0, 255, 255)
-    BLACK = (0, 0, 0)
-    GRAY = (128, 128, 128)
-    LIGHTGRAY = (211, 211, 211)
-    WHITE = (255, 255, 255)
-    MAGENTA = (255, 0, 255)
-    PURPLE = (128, 0, 128)
-    GOLD = (255, 215, 0)
-    ORANGE = (255, 165, 0)
-    BROWN = (139, 69, 19)
+    GRAVITY = 0.5        # How strong gravity is
+    JUMP_VELOCITY = -10  # How high the player can jump
 
-    # Gravity 
-    GRAVITY = 0.5       # Adjust this value to control gravity strength
-    JUMP_VELOCITY = -10 # Adjust this value to control jump height
-
-    # Setting up the display.
+    # Set up the game window size
     screen_width = 1000
     screen_height = 600
-    window = pygame.display.set_mode((screen_width, screen_height)) 
-    # Setting a caption name.
-    pygame.display.set_caption("The Adventures of Hubert")
+    window = pygame.display.set_mode((screen_width, screen_height))  
+    pygame.display.set_caption("The Adventures of Hubert")  # Set the title of the window
 
-    # Initializing fonts for text.
-    font = pygame.font.SysFont("8514oem", 20)
-    font_large = pygame.font.SysFont("8514oem", 50)
+    # Choose fonts to write text on the screen
+    font = pygame.font.SysFont("8514oem", 20)      # Small font
+    font_large = pygame.font.SysFont("8514oem", 50) # Big font
 
-    # Initialize other variables.
-    # Setting up a clock (FPS)
-    clock = pygame.time.Clock()     # The function to use our variable to set FPS.
-    frames_per_sec = 60        # The FPS we want the game to run at.
+    # More game stuff
+    clock = pygame.time.Clock()     # Keep track of time
+    frames_per_sec = 60             # How many times the screen updates each second
 
-    moving_speed = 0        # Background Scroll speed variable
-    collisions = 0          # To keep score of killed enemies
-    coin_score = 0          # To keep score of collected coins
-    current_level = 1       # To keep track of the current level
-    boss_defeated = False   # Flag to indicate if boss is defeated
+    moving_speed = 0        # How fast the background moves
+    collisions = 0          # How many enemies we've hit
+    coin_score = 0          # How many coins we've collected
+    current_level = 1       # What level we're on
+    boss_defeated = False   # Did we beat the boss?
 
-    # *** Added: Heart Spawn Tracking ***
-    heart_spawned = {1: False, 2: False, 3: False}  # Tracks if heart has been spawned per level
+    # Keep track of hearts in each level
+    heart_spawned = {1: False, 2: False, 3: False}  # Hearts for levels 1, 2, and 3
 
-    # Initializing Images
-    # Button images
-    start_button_img = pygame.image.load("START.png").convert_alpha()
-    exit_button_img = pygame.image.load("EXIT.png").convert_alpha()
-    restart_button_img = pygame.image.load("RESTART.png").convert_alpha()
+    # Load pictures
+    start_button_img = pygame.image.load("START.png").convert_alpha()    # Start button
+    exit_button_img = pygame.image.load("EXIT.png").convert_alpha()      # Exit button
+    restart_button_img = pygame.image.load("RESTART.png").convert_alpha()# Restart button
 
-    # Ant pictures
+    # Load ant pictures to make them walk
     ant_walk_images = [
         pygame.image.load("Ant1.png").convert_alpha(),
         pygame.image.load("Ant2.png").convert_alpha(),
@@ -75,55 +67,50 @@ def play():
         pygame.image.load("Ant6.png").convert_alpha(),
     ]
     
-    # Backgrounds
-    start_background_image = pygame.image.load("You Found a Cave2.png").convert_alpha()
-    start_rect = start_background_image.get_rect()
+    # Load backgrounds for different screens
+    start_background_image = pygame.image.load("You Found a Cave2.png").convert_alpha()  # Start screen background
+    start_background_image = pygame.transform.scale(start_background_image, (screen_width, screen_height))  
+    start_rect = start_background_image.get_rect()  #
 
-    # background to fit the screen
-    start_background_image = pygame.transform.scale(start_background_image, (screen_width, screen_height))
-    start_rect = start_background_image.get_rect()
+    # Load game backgrounds for different levels
+    background_image = pygame.image.load("golden_cave_background.png").convert_alpha()  # Level 1 background
+    background_width = background_image.get_width()    
+    background_height = background_image.get_height()  
+    tiles = 3  # How many times the background repeats to make scrolling smooth
 
-    # Game Background - Example only.
-    background_image = pygame.image.load("golden_cave_background.png").convert_alpha()
-    background_width = background_image.get_width()
-    background_height = background_image.get_height()
-    tiles = 3       # How many game background images for smooth screen movement.
- 
-     # Level 2 Background
+    # Load Level 2 background
     level2_background_image = pygame.image.load("Background 2.png").convert_alpha()
     level2_background_width = level2_background_image.get_width()
     level2_background_height = level2_background_image.get_height()
 
-    # Level 3 Background
+    # Load Level 3 (boss) background
     spider_boss_background_image = pygame.image.load("Spider boss background.png").convert_alpha()
-    spider_boss_background_image = pygame.transform.scale(spider_boss_background_image, (screen_width, screen_height))
+    spider_boss_background_image = pygame.transform.scale(spider_boss_background_image, (screen_width, screen_height))  # Make it fit the screen
 
-    # Game-Over Background
+    # Load Game-Over background
     you_died_background_image = pygame.image.load("You died background.png").convert_alpha()
-    you_died_rect = you_died_background_image.get_rect()
-    
-    you_died_background_image = pygame.transform.scale(you_died_background_image, (screen_width, screen_height))
+    you_died_background_image = pygame.transform.scale(you_died_background_image, (screen_width, screen_height))  # Make it fit the screen
     you_died_rect = you_died_background_image.get_rect()
 
-    # Text Images
-    bye_img = font_large.render("See you next time", True, PURPLE)
-    game_over_image = font_large.render("...GAME OVER...", True, BLUE)
-    game_start_image = font_large.render("ADVENTURES OF HUBERT THE GAME", True, BLUE)
+    # Create text images
+    bye_img = font_large.render("See you next time", True, PURPLE)            # Bye text
+    game_over_image = font_large.render("...GAME OVER...", True, BLUE)         # Game over text
+    game_start_image = font_large.render("ADVENTURES OF HUBERT THE GAME", True, BLUE)  # Game heading title text
 
-    # Level 1 to 3 Transition Images
+    # Load images between levels
     all_levels_image = pygame.image.load("All levels.png").convert_alpha()
     level1_done_image = pygame.image.load("Level 1 done.png").convert_alpha()
     level2_done_image = pygame.image.load("Level 2 done.png").convert_alpha()
     level3_done_image = pygame.image.load("Level 3 done.png").convert_alpha()
 
-    # images to fit the screen
+    # Make images fit the screen
     all_levels_image = pygame.transform.scale(all_levels_image, (screen_width, screen_height))
     level1_done_image = pygame.transform.scale(level1_done_image, (screen_width, screen_height))
     level2_done_image = pygame.transform.scale(level2_done_image, (screen_width, screen_height))
     level3_done_image = pygame.transform.scale(level3_done_image, (screen_width, screen_height))
 
-    # Load coin animation 
-    coin_scale = 0.4  # make the coin smaller or larger
+    # Load and scale coin images
+    coin_scale = 0.4  # How big the coins are
     walkCoin = [
         pygame.transform.scale(pygame.image.load("Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
         pygame.transform.scale(pygame.image.load("Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
@@ -133,9 +120,8 @@ def play():
         pygame.transform.scale(pygame.image.load("Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
     ]
 
-    # Load bat animation 
-    
-    bat_scale = 0.75  # make the bat bigger
+    # Load and scale bat images
+    bat_scale = 0.75  # How big the bats are
     bat_images = [
         pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
         pygame.transform.scale(pygame.image.load("bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
@@ -147,9 +133,7 @@ def play():
         pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
    
-    
-    # Boss Spider Images
-
+    # Load spider (boss) images 
     # Spider Down images
     spider_down_images = [
         pygame.image.load("Spider_Down_1.png").convert_alpha(),
@@ -190,7 +174,7 @@ def play():
         pygame.image.load("Spider_Right_6.png").convert_alpha(),
     ]
 
-    # Boss shooting images
+    # Load boss shooting images
     boss_shoot_images = [
         pygame.image.load("Bossshoot1.png").convert_alpha(),
         pygame.image.load("Bossshoot2.png").convert_alpha(),
@@ -198,8 +182,8 @@ def play():
         pygame.image.load("Bossshoot4.png").convert_alpha(),
     ]
 
-    # Heart Images 
-    heart_scale = 0.2  # smaller or larger
+    # Load and scale heart images
+    heart_scale = 0.2  # How big the hearts are
     heart_images = [
         pygame.transform.scale(pygame.image.load("HP+1.1.png").convert_alpha(),
                               (int(pygame.image.load("HP+1.1.png").get_width() * heart_scale),
@@ -211,105 +195,104 @@ def play():
                               (int(pygame.image.load("HP+1.3.png").get_width() * heart_scale),
                                int(pygame.image.load("HP+1.3.png").get_height() * heart_scale)))
     ]
+    
+    # Load Hubert walking and missile images for instructions page
+    hubert_walk_img = pygame.image.load("hubert1.png").convert_alpha()  # Hubert walking
+    missile_img = pygame.image.load("Bossshoot1.png").convert_alpha()  # Shooting image
 
-    # Drawing a grid on window for later.
-    grid_size = 50     # Tile size for 'square' grid overlay.
-    def grid():
-        for line in range(0, 20):
-            pygame.draw.line(window, BLACK, (0, line*grid_size),(screen_width, line*grid_size), 2)
-            pygame.draw.line(window, BLACK, (line*grid_size, 0),(line*grid_size, screen_width), 2)
+    # Scale Hubert walk and missile images
+    hubert_action_scale = 0.5  # How big Hubert and missiles are
+    hubert_walk_img = pygame.transform.scale(hubert_walk_img, (int(hubert_walk_img.get_width() * hubert_action_scale), int(hubert_walk_img.get_height() * hubert_action_scale)))
+    missile_info_img = pygame.transform.scale(missile_img, (int(missile_img.get_width() * hubert_action_scale), int(missile_img.get_height() * hubert_action_scale)))
 
-    # Function to display level transition screens
+    # Load and scale the victory coin image on last page/screen
+    victory_coin_image = pygame.image.load("Coin1.png").convert_alpha()  
+    victory_coin_scale = 0.3  # How big the victory coin is
+    victory_coin_image = pygame.transform.scale(victory_coin_image, (int(victory_coin_image.get_width() * victory_coin_scale), int(victory_coin_image.get_height() * victory_coin_scale)))
+
+  
+    # Function to show level screens
     def show_level_screen(image):
-        window.blit(image, (0,0))
-        pygame.display.update()
-        time.sleep(2)  # change this to speed up images changes
+        window.blit(image, (0,0))    
+        pygame.display.update()      
+        time.sleep(2)                # Wait for 2 seconds
 
-    # Heart Class 
+    # give health to the player
     class Heart(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Heart, self).__init__()
-            self.images = heart_images
+            self.images = heart_images  
             self.index = 0
-            self.animation_speed = 0.1
-            self.image = self.images[int(self.index)]
-            self.rect = self.image.get_rect(center=(x, y))
-            self.speed = 2  # Speed of the heart movement
+            self.animation_speed = 0.1  # How fast the heart apperas
+            self.image = self.images[int(self.index)]  
+            self.rect = self.image.get_rect(center=(x, y))  
+            self.speed = 2  # How fast the heart moves
 
         def update(self):
-            self.index += self.animation_speed
+            self.index += self.animation_speed  # Change animation frame
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
-            self.rect.move_ip(-self.speed, 0)
+                self.index = 0  
+            self.image = self.images[int(self.index)]  
+            self.rect.move_ip(-self.speed, 0)  
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  # Remove the heart if it goes off screen
    
-
-   # Moving Ant
+    # ants that walk
     class AnimatedAnt(pygame.sprite.Sprite):
         def __init__(self, images, scale, speed, x, y):
             super(AnimatedAnt, self).__init__()
-            # Scale all images 
+            # Make the ant images bigger
             self.images = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in images]
             self.index = 0
-            self.animation_speed = 0.1  # Adjust speed as needed
-            self.image = self.images[self.index]
-            self.rect = self.image.get_rect(center=(x, y))
-            self.speed = speed
+            self.animation_speed = 0.1  # How fast the ant walks
+            self.image = self.images[self.index]  
+            self.rect = self.image.get_rect(center=(x, y))  
+            self.speed = speed  # How fast the ant moves
 
         def update(self):
-            self.index += self.animation_speed
+            self.index += self.animation_speed  
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
-            self.rect.move_ip(-self.speed, 0)
+                self.index = 0  
+            self.image = self.images[int(self.index)]  
+            self.rect.move_ip(-self.speed, 0)  #
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  # Remove the ant if it goes off screen
    
-
-    # Define all the classes:
+    # Buttons Class - makes buttons you can click
     class Buttons():
-        """Define the button class, including the function to detect mouse-over and click on buttons."""
+        """Make buttons and check if you clicked them."""
         def __init__(self, x, y, image, scale) -> None:
             width = image.get_width()
             height = image.get_height()
-            self.image = pygame.transform.scale(image, ((int(width * scale)), (int(height * scale))))
-            self.rect = self.image.get_rect()
-            self.rect.topleft = (x, y)
-            self.mouse_click = False
+            self.image = pygame.transform.scale(image, ((int(width * scale)), (int(height * scale))))  
+            self.rect = self.image.get_rect()  
+            self.rect.topleft = (x, y)  
+            self.mouse_click = False  
 
         def draw(self):
-            """Draw onto surface with (x,y) coordinates. Determine if mouse click is on drawn button."""
-            # Draw the image onto the screen at position rect.x and rect.y
-            window.blit(self.image, (self.rect.x, self.rect.y))
+            """Draw the button and check if it was clicked."""
+            window.blit(self.image, (self.rect.x, self.rect.y))  
 
-            # Check for collision and click from mouse.
-            clicked = False
-            pos_mouse = pygame.mouse.get_pos()
+            clicked = False  
+            pos_mouse = pygame.mouse.get_pos()  
 
-            # Check if the mouse is over the button rect.
-            if self.rect.collidepoint(pos_mouse):
+            if self.rect.collidepoint(pos_mouse):  
 
-                # Because the one click might return multiple "strikes",
-                # we only want the first click to count.
-                # We can set a flag for the first click, and ensure the if statement
-                # is only true for that "un-raised flag" status
+                if pygame.mouse.get_pressed()[0] == 1 and not self.mouse_click:  
+                    self.mouse_click = True  #
+                    clicked = True  # Button was clicked
 
-                # Check if the mouse is also clicked.
-                if pygame.mouse.get_pressed()[0] == 1 and self.mouse_click == False:
-                    self.mouse_click = True         # Flag is set.
-                    clicked = True
+                if pygame.mouse.get_pressed()[0] == 0:  # If mouse button is released
+                    self.mouse_click = False  # Reset the click
 
-                if pygame.mouse.get_pressed()[0] == 0:      # Once mouse click is lifted.
-                    self.mouse_click = False        # Flag is reset.
-            return clicked
+            return clicked  # Tell if the button was clicked
 
+    # Player Class - the main character
     class Player(pygame.sprite.Sprite):
         def __init__(self, health, scale):
             super(Player, self).__init__()
             
-            # Hubert Pics location
+            # Load Hubert's walking images
             self.images = [
                 pygame.image.load("hubert1.png").convert_alpha(),
                 pygame.image.load("hubert2.png").convert_alpha(),
@@ -319,24 +302,23 @@ def play():
                 pygame.image.load("hubert6.png").convert_alpha()
             ]
             
-           
+            # Make Hubert's images bigger or smaller
             self.images = [
                 pygame.transform.scale(img, (
                     int(img.get_width() * scale), 
                     int(img.get_height() * scale)
                 )) for img in self.images
             ]
-            self.index = 0
-            self.image = self.images[self.index]
+            self.index = 0  # Current image
+            self.image = self.images[self.index]  # Show the current image
             self.rect = self.image.get_rect()
-            self.rect.bottom = 420  # Start on the ground
+            self.rect.bottom = 420  # Start position on the ground
             
-           
-            self.animation_speed = 0.15  # speed of the picture for hubert
+            self.animation_speed = 0.15  # How fast Hubert walks
             self.animation_timer = 0  
             self.is_moving = False  
-            self.missiles = []
-            self.health = health
+            self.missiles = []  # List of missiles Hubert has shot
+            self.health = health  # How much health Hubert has
             self.jumping = False
             self.velocity = [0, 0]
             
@@ -345,36 +327,35 @@ def play():
             self.is_jumping = False
 
         def move(self, current_level):
-            pressed_keys = pygame.key.get_pressed()
-            self.is_moving = False  # Reset movement flag each frame
+            pressed_keys = pygame.key.get_pressed()  # Check which keys are pressed
+            self.is_moving = False  # Reset moving flag each frame
             
-            # Move the sprite based on keyboard input.
+            # Move based on arrow keys
             if pressed_keys[K_UP]:
-                self.rect.move_ip(0, -5)
+                self.rect.move_ip(0, -5)  # Move up
                 self.is_moving = True
             if pressed_keys[K_DOWN]:
-                self.rect.move_ip(0, 5)
+                self.rect.move_ip(0, 5)   # Move down
                 self.is_moving = True
             if pressed_keys[K_LEFT]:
-                self.rect.move_ip(-5, 0)
+                self.rect.move_ip(-5, 0)  # Move left
                 self.is_moving = True
             if pressed_keys[K_RIGHT]:
-                self.rect.move_ip(5, 0)
+                self.rect.move_ip(5, 0)   # Move right
                 self.is_moving = True
 
-            # Apply Gravity
-            self.vel_y += GRAVITY
-            self.rect.y += self.vel_y
-
+            # Apply gravity
+            self.vel_y += GRAVITY  
+            self.rect.y += self.vel_y  
             
+            # Keep Hubert on the ground for levels 1 and 2
             if current_level in [1, 2]:
-                # Ensure the player never leaves the screen vertically on level 1 and 2
                 if self.rect.bottom >= 420:
-                    self.rect.bottom = 420
+                    self.rect.bottom = 420  # Stay on the ground
                     self.vel_y = 0
                     self.is_jumping = False
             elif current_level == 3:
-                # In Level 3, ensure the player stays within the screen boundaries.
+                # Keep Hubert inside the screen for level 3
                 if self.rect.bottom >= screen_height:
                     self.rect.bottom = screen_height
                     self.vel_y = 0
@@ -383,365 +364,366 @@ def play():
                     self.rect.top = 0
                     self.vel_y = 0
 
-            # Ensure the player never leaves the screen horizontally.
+            # Don't let Hubert go off the sides of the screen
             if self.rect.left < 0:
                 self.rect.left = 0
             elif self.rect.right > screen_width:
                 self.rect.right = screen_width
 
-           
+            # Animate Hubert if moving
             if self.is_moving:
-                self.animation_timer += self.animation_speed
+                self.animation_timer += self.animation_speed  
                 if self.animation_timer >= len(self.images):
-                    self.animation_timer = 0
-                self.index = int(self.animation_timer)
-                self.image = self.images[self.index]
+                    self.animation_timer = 0  
+                self.index = int(self.animation_timer)  
+                self.image = self.images[self.index]  
             else:
-                # If not moving, reset to the first image
+                # If not moving, show the first image
                 self.index = 0
                 self.image = self.images[self.index]
 
-        # Jump Method
+        # Make Hubert jump
         def jump(self):
             if not self.is_jumping:
-                self.vel_y = JUMP_VELOCITY
-                self.is_jumping = True
+                self.vel_y = JUMP_VELOCITY  
+                self.is_jumping = True  
 
-        # HealthBar
+        # Draw the health bar on the screen
         def health_bar(self, surface, position, size, border_colour, background_colour, health_colour, remaining_health):
-            pygame.draw.rect(surface, background_colour, (*position, *size))
-            pygame.draw.rect(surface, border_colour, (*position, *size), 1)
-            inner_position  = (position[0]+1, position[1]+1)
-            inner_rect = ((size[0]-2) * remaining_health, size[1]-2)
+            pygame.draw.rect(surface, background_colour, (*position, *size))  
+            pygame.draw.rect(surface, border_colour, (*position, *size), 1)  
+            inner_position  = (position[0]+1, position[1]+1)  
+            inner_rect = ((size[0]-2) * remaining_health, size[1]-2)  
             rect = (round(inner_position[0]), round(inner_position[1]), round(inner_rect[0]), round(inner_rect[1]))
-            pygame.draw.rect(surface, health_colour, rect)
+            pygame.draw.rect(surface, health_colour, rect)  
 
+        # Show the health bar
         def draw_health(self, surf):
-            health_rect = pygame.Rect(0, 0, 100, 7)
-            health_rect.midbottom = self.rect.centerx, self.rect.top
-            max_health = 100
-            self.health_bar(surf, health_rect.topleft, health_rect.size, BLACK, RED, GREEN, self.health/max_health)
+            health_rect = pygame.Rect(0, 0, 100, 7)  # Size of health bar
+            health_rect.midbottom = self.rect.centerx, self.rect.top 
+            max_health = 100  # Maximum health
+            self.health_bar(surf, health_rect.topleft, health_rect.size, BLACK, RED, GREEN, self.health/max_health) 
 
-        # Shoot to F key
+        # Make Hubert shoot missiles when pressing 'F'
         def shoot(self):
-            missile = Weapon(self.rect.centerx, self.rect.bottom)
-            self.missiles.append(missile)
-            all_sprites.add(missile)
+            missile_offset = 65  # Where the missile shoot from on the picture of hubert
+            missile = Weapon(self.rect.centerx, self.rect.top + missile_offset)  
+            self.missiles.append(missile) 
+            all_sprites.add(missile)  
 
+    # Enemy Class 
     class Enemy(pygame.sprite.Sprite):
         def __init__(self, image, scale, speed, x, y):
             super(Enemy, self).__init__()
             width = image.get_width()
             height = image.get_height()
-            self.image = pygame.transform.scale(image, ((int(width * scale)), (int(height * scale))))
-            self.image.set_colorkey(WHITE)
+            self.image = pygame.transform.scale(image, ((int(width * scale)), (int(height * scale))))  # Make enemy bigger
+            self.image.set_colorkey(WHITE) 
             self.rect = self.image.get_rect()
-            self.rect.center = (x, y)
-            self.speed = speed
+            self.rect.center = (x, y)  
+            self.speed = speed  
 
         def update(self):
-            self.rect.move_ip(-self.speed, 0)
+            self.rect.move_ip(-self.speed, 0) 
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  # Remove enemy if it goes off screen
 
+    # Weapon Class 
     class Weapon(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Weapon, self).__init__()
-            missile_img = pygame.image.load('missile.png').convert_alpha()
+            missile_img = pygame.image.load('missile.png').convert_alpha()  
             missile_img_copy = missile_img.copy()
-            # pygame.transform.flip() will flip the image
             missile_img_with_flip = pygame.transform.flip(missile_img_copy, True, False)
-            self.image = missile_img_with_flip.convert_alpha()
-            self.image.set_colorkey(WHITE)
-            self.rect = self.image.get_rect(center = (x, y))
+            self.image = missile_img_with_flip.convert_alpha() 
+            self.image.set_colorkey(WHITE)  
+            self.rect = self.image.get_rect(center = (x, y))  
 
         def update(self):
-            self.rect.move_ip(5, 0)
+            self.rect.move_ip(5, 0)  
             if self.rect.right > screen_width:
-                self.kill()
+                self.kill()  
 
+    # Coin Class - coins that Hubert can collect
     class Coin(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Coin, self).__init__()
-            self.images = walkCoin
+            self.images = walkCoin  
             self.index = 0
-            self.animation_speed = 0.2
-            self.image = self.images[int(self.index)]
-            self.rect = self.image.get_rect(center=(x, y))
+            self.animation_speed = 0.2  # How fast the coin animates
+            self.image = self.images[int(self.index)]  
+            self.rect = self.image.get_rect(center=(x, y))  
 
         def update(self):
-            self.index += self.animation_speed
+            self.index += self.animation_speed  
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
-            self.rect.move_ip(-2, 0)
+                self.index = 0  
+            self.image = self.images[int(self.index)] 
+            self.rect.move_ip(-2, 0)  
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  
 
+    # Bat Class - bats that fly
     class Bat(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Bat, self).__init__()
-            self.images = bat_images
+            self.images = bat_images  
             self.index = 0
-            self.animation_speed = 0.2
-            self.image = self.images[int(self.index)]
-            self.rect = self.image.get_rect(center=(x, y))
-            self.speed = 5
+            self.animation_speed = 0.2  # How fast the bat animates
+            self.image = self.images[int(self.index)]  
+            self.rect = self.image.get_rect(center=(x, y))  
+            self.speed = 5  
 
         def update(self):
-            self.index += self.animation_speed
+            self.index += self.animation_speed  
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
-            self.rect.move_ip(-self.speed, 0)
+                self.index = 0  
+            self.image = self.images[int(self.index)]  
+            self.rect.move_ip(-self.speed, 0)  
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  #
 
-    # Boss Spider 
-    
+    # BossSpider Class - the big boss enemy
     class BossSpider(pygame.sprite.Sprite):
         def __init__(self, health, speed, scale):
             super(BossSpider, self).__init__()
+
             # Load images for different directions
             self.images_down = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_down_images]
             self.images_left = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_left_images]
             self.images_up = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_up_images]
             self.images_right = [pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale))) for img in spider_right_images]
 
-            self.images = self.images_down
+            self.images = self.images_down  
             self.index = 0
-            self.animation_speed = 0.3
-            self.image = self.images[int(self.index)]
+            self.animation_speed = 0.3  # How fast the boss animates
+            self.image = self.images[int(self.index)]  
             self.rect = self.image.get_rect()
-            self.rect.center = (screen_width - 100, screen_height // 2)  # Start at right side of screen
-            self.speed = speed  # Adjust the speed of the boss spider here
-            self.health = health  # Adjust the health of the boss spider here
-            self.direction = random.choice(['up', 'down', 'left', 'right'])
-            self.last_shot = pygame.time.get_ticks()
-            self.shoot_cooldown = 3000  # Boss shoots every 3 seconds
-            self.move_timer = pygame.time.get_ticks()
-            self.move_delay = 1000  # Change direction every 1 second
+            self.rect.center = (screen_width - 100, screen_height // 2)  
+            self.speed = speed  
+            self.health = health  
+            self.direction = random.choice(['up', 'down', 'left', 'right'])  
+            self.last_shot = pygame.time.get_ticks()  
+            self.shoot_cooldown = 3000  # How often the boss shoots (milliseconds)
+            self.move_timer = pygame.time.get_ticks()  #
+            self.move_delay = 1000  # How often the boss changes direction
 
         def update(self):
-
-            self.index += self.animation_speed
+            self.index += self.animation_speed  
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
+                self.index = 0  
+            self.image = self.images[int(self.index)]  
 
-            # Random movement 
+            # Change direction every move_delay milliseconds
             current_time = pygame.time.get_ticks()
             if current_time - self.move_timer > self.move_delay:
-                self.direction = random.choice(['up', 'down', 'left', 'right'])
-                self.move_timer = current_time
+                self.direction = random.choice(['up', 'down', 'left', 'right'])  
+                self.move_timer = current_time  
 
+            # Move the boss based on direction
             if self.direction == 'up':
-                self.rect.y -= self.speed
-                self.images = self.images_up
+                self.rect.y -= self.speed  
+                self.images = self.images_up  
             elif self.direction == 'down':
-                self.rect.y += self.speed
-                self.images = self.images_down
+                self.rect.y += self.speed  
+                self.images = self.images_down  
             elif self.direction == 'left':
-                self.rect.x -= self.speed
-                self.images = self.images_left
+                self.rect.x -= self.speed  
+                self.images = self.images_left  
             elif self.direction == 'right':
-                self.rect.x += self.speed
-                self.images = self.images_right
+                self.rect.x += self.speed  
+                self.images = self.images_right  
 
-            # Ensure the boss stays within the right-hand side of the screen
+            # Keep the boss on the right half of the screen so its easier to kill
             if self.rect.left < screen_width // 2:
-                self.rect.left = screen_width // 2
+                self.rect.left = screen_width // 2 
             if self.rect.right > screen_width:
-                self.rect.right = screen_width
+                self.rect.right = screen_width  
             if self.rect.top < 0:
-                self.rect.top = 0
+                self.rect.top = 0  
             if self.rect.bottom > screen_height:
-                self.rect.bottom = screen_height
+                self.rect.bottom = screen_height  
 
-            # Shooting
+            
             if current_time - self.last_shot > self.shoot_cooldown:
-                self.shoot()
-                self.last_shot = current_time
+                self.shoot()  
+                self.last_shot = current_time  
 
         def shoot(self):
-            boss_bullet = BossBullet(self.rect.centerx, self.rect.centery)
-            all_sprites.add(boss_bullet)
-            boss_bullets.add(boss_bullet)
+            boss_bullet = BossBullet(self.rect.centerx, self.rect.centery)  
+            all_sprites.add(boss_bullet)  
+            boss_bullets.add(boss_bullet)  
 
+        # Draw the boss's health bar
         def draw_health(self, surf):
-            # health bar above the boss
-            health_rect = pygame.Rect(0, 0, 150, 10)  # Adjust the size of the health bar here
-            health_rect.midbottom = self.rect.centerx, self.rect.top - 5
-            max_health = 100  # Note: Adjust the max health of the boss spider here
-            self.health_bar(surf, health_rect.topleft, health_rect.size, BLACK, RED, GREEN, self.health / max_health)
+            # Health bar above the boss
+            health_rect = pygame.Rect(0, 0, 150, 10)  # Size of the health bar
+            health_rect.midbottom = self.rect.centerx, self.rect.top - 5  
+            max_health = 100  # Maximum health
+            self.health_bar(surf, health_rect.topleft, health_rect.size, BLACK, RED, GREEN, self.health / max_health)  
 
+        # Draw the health bar
         def health_bar(self, surface, position, size, border_colour, background_colour, health_colour, remaining_health):
-            pygame.draw.rect(surface, background_colour, (*position, *size))
-            pygame.draw.rect(surface, border_colour, (*position, *size), 1)
-            inner_position = (position[0] + 1, position[1] + 1)
-            inner_rect = ((size[0] - 2) * remaining_health, size[1] - 2)
+            pygame.draw.rect(surface, background_colour, (*position, *size))  
+            pygame.draw.rect(surface, border_colour, (*position, *size), 1)  
+            inner_position = (position[0] + 1, position[1] + 1)  #
+            inner_rect = ((size[0] - 2) * remaining_health, size[1] - 2)  
             rect = (round(inner_position[0]), round(inner_position[1]), round(inner_rect[0]), round(inner_rect[1]))
-            pygame.draw.rect(surface, health_colour, rect)
+            pygame.draw.rect(surface, health_colour, rect)  
 
-
-    # Boss bullet 
+    # BossBullet Class - bullets shot by the boss
     class BossBullet(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(BossBullet, self).__init__()
-            # Load bullet images and animate them
-            # Adjust bullet size here
+            # Load and scale bullet images
             self.images = [pygame.transform.scale(img, (30, 30)) for img in boss_shoot_images]
             self.index = 0
-            self.animation_speed = 0.1
-            self.image = self.images[int(self.index)]
-            self.rect = self.image.get_rect(center=(x, y))
-            self.speed = 8  # Adjust bullet speed here
+            self.animation_speed = 0.1  # How fast the bullet animates
+            self.image = self.images[int(self.index)]  
+            self.rect = self.image.get_rect(center=(x, y))  
+            self.speed = 8  # How fast the bullet moves
 
         def update(self):
-            self.index += self.animation_speed
+            self.index += self.animation_speed  
             if self.index >= len(self.images):
-                self.index = 0
-            self.image = self.images[int(self.index)]
-            # Move towards the player
-            self.rect.x -= self.speed
+                self.index = 0  
+            self.image = self.images[int(self.index)]  
+            self.rect.x -= self.speed  
             if self.rect.right < 0:
-                self.kill()
+                self.kill()  
 
+    # Create the player
+    player = Player(health=100, scale=0.5)  # Make the player health here
 
-    
-    player = Player(health = 100, scale = 0.5)  # make hubert bigger
-    
-    start_button = Buttons(130, 435, start_button_img, scale = 0.5)
-    exit_button = Buttons(510,435, exit_button_img, scale = 0.5)
-    restart_button = Buttons(130, 435, restart_button_img, scale = 0.5)
+    # Create buttons for main screen
+    start_button = Buttons(130, 435, start_button_img, scale=0.5)     
+    exit_button = Buttons(510, 435, exit_button_img, scale=0.5)       
+    restart_button = Buttons(130, 435, restart_button_img, scale=0.5) 
 
-    # Create groups for enemies, missiles, coins, bats, etc.
-    enemies = pygame.sprite.Group()
-    missiles = pygame.sprite.Group()
-    coins = pygame.sprite.Group()
-    bats = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
+    # Create groups for different sprites
+    enemies = pygame.sprite.Group()   # Group for enemies
+    missiles = pygame.sprite.Group()  # Group for missiles
+    coins = pygame.sprite.Group()     # Group for coins
+    bats = pygame.sprite.Group()      # Group for bats
+    all_sprites = pygame.sprite.Group()  # All sprites group
+    all_sprites.add(player)  # Add the player to all sprites
+    boss_bullets = pygame.sprite.Group()  # Group for boss bullets
+    boss_group = pygame.sprite.Group()    # Group for the boss
+    hearts = pygame.sprite.Group()  # Group for hearts
 
-    boss_bullets = pygame.sprite.Group()
-    boss_group = pygame.sprite.Group()
-
-    # Heart Group 
-    hearts = pygame.sprite.Group()
-
-    # Define user events.
-
+   #EVENTS ON THE SCREEN
     add_enemy = pygame.USEREVENT + 1
- 
-    pygame.time.set_timer(add_enemy, 1000)  # HOW OFTEN THE ANTS APPEAR
+    pygame.time.set_timer(add_enemy, 1000)  # Add an enemy every 1 second
     
-
-
     add_coin = pygame.USEREVENT + 2
-    pygame.time.set_timer(add_coin, 3000)
+    pygame.time.set_timer(add_coin, 3000)    # Add a coin every 3 seconds
 
     add_bat = pygame.USEREVENT + 3
-    pygame.time.set_timer(add_bat, 5000)
+    pygame.time.set_timer(add_bat, 5000)     # Add a bat every 5 seconds
 
-    # Heart Spawn
     add_heart = pygame.USEREVENT + 4
+    pygame.time.set_timer(add_heart, 10000)  # Add a heart every 10 seconds
 
-    # Heart spawns at 10 seconds
-    pygame.time.set_timer(add_heart, 10000)
-
-    # Start the Loops
-    # Create the start page loop.
+    
     start_loop = True
     while start_loop:
-        window.fill(WHITE)
+        window.fill(WHITE)  
+        window.blit(start_background_image, (0, 0))  # Show the start background
+        window.blit(game_start_image, (175, 30))      
 
        
-        window.blit(start_background_image, (0, 0))  # Background image
-
-        window.blit(game_start_image, (175,30))
-
-        # Check for close or escape event.
         for event in pygame.event.get():
-            # First define an exit strategy for the loop.
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
 
-        # End the first loop, The Start Page, and move on to next loop.
+        
         if start_button.draw():
             start_loop = False
 
-        # Quit the application.
+        # If Exit button is clicked, quit the game
         if exit_button.draw():
-            time.sleep(.5)
-            window.fill(BLACK)
-            window.blit(bye_img, (350,250))
-            pygame.display.update()
-            time.sleep(1.5)
+            time.sleep(0.5)  # Wait half a second
+            window.fill(BLACK)  
+            window.blit(bye_img, (350, 250))  #
+            pygame.display.update()  
+            time.sleep(1.5)  
             pygame.quit()
             sys.exit()
 
-        # Update the display for each loop.
         pygame.display.update()
 
-    # Informational Screen 
-
+    
     info_loop = True
-    info_start_time = pygame.time.get_ticks()  # Record the start time
+    info_start_time = pygame.time.get_ticks()  
 
+    standard_width = 100  # Width for info images
+    standard_height = 100 # Height for info images
 
-    standard_width = 100
-    standard_height = 100
+    # info screen
+    ant_info_img = pygame.transform.scale(ant_walk_images[0], (standard_width, standard_height))  # Ant picture
+    bat_info_img = pygame.transform.scale(bat_images[0], (standard_width, standard_height))        # Bat picture
+    coin_info_img = pygame.transform.scale(walkCoin[0], (standard_width, standard_height))          # Coin picture
+    heart_info_img = pygame.transform.scale(heart_images[0], (standard_width, standard_height))      # Heart picture
 
-    # Scale enemy images 
-    ant_info_img = pygame.transform.scale(ant_walk_images[0], (standard_width, standard_height))
-    bat_info_img = pygame.transform.scale(bat_images[0], (standard_width, standard_height))
+    # info screen
+    hubert_walk_info_img = pygame.transform.scale(hubert_walk_img, (standard_width, standard_height))  # Hubert walking
+    missile_info_scaled_img = pygame.transform.scale(missile_info_img, (standard_width, standard_height))  # Missile
 
-    # Scale coin and heart images 
-    coin_info_img = pygame.transform.scale(walkCoin[0], (standard_width, standard_height))
-    heart_info_img = pygame.transform.scale(heart_images[0], (standard_width, standard_height))
+    # info screen text
+    info_text1 = font_large.render("Watch out for these cave creatures that live in the cave.", True, WHITE)  
+    info_text2 = font.render("Be on the look out for the BOSS:", True, WHITE) 
 
-    # text for the info screen
-    info_text1 = font_large.render("Watch out for these cave creatures that live in the cave.", True, WHITE)
-    info_text2 = font.render("Be on the look out for the BOSS:", True, WHITE)
+    # Instruction Texts on 2nd page
+    instruction_text1 = font.render("Space Bar to Jump", True, WHITE)         # Jump instruction
+    instruction_text2 = font.render("'F' to Shoot", True, WHITE)            # Shoot instruction
+    instruction_text3 = font.render("Use Arrow Keys to Walk", True, WHITE)  # Move instruction
 
     while info_loop:
-        window.fill(BLACK)  # Background color for info screen
-
-        
-        window.blit(info_text1, (50, 50))
-        window.blit(info_text2, (50, 500))
-
-        spacing = 50
-        total_width = 4 * standard_width + 3 * spacing
-        start_x = (screen_width - total_width) // 2
-        y_position = 150  # Y position for the images
-
-        # Blit enemy and goodies images in a row
-        window.blit(ant_info_img, (start_x, y_position))
-        window.blit(bat_info_img, (start_x + standard_width + spacing, y_position))
-        window.blit(coin_info_img, (start_x + 2 * (standard_width + spacing), y_position))
-        window.blit(heart_info_img, (start_x + 3 * (standard_width + spacing), y_position))
-
-        #add labels below images
-        label_y_offset = 100  # Pixels below the images
-
-        ant_label = font.render("Ant Enemy", True, WHITE)
-        bat_label = font.render("Bat Enemy", True, WHITE)
-        coin_label = font.render("Coins (Treasure)", True, WHITE)
-        heart_label = font.render("Hearts (Health)", True, WHITE)
-
-        window.blit(ant_label, (start_x + (standard_width - ant_label.get_width()) // 2, y_position + standard_height + 10))
-        window.blit(bat_label, (start_x + standard_width + spacing + (standard_width - bat_label.get_width()) // 2, y_position + standard_height + 10))
-        window.blit(coin_label, (start_x + 2 * (standard_width + spacing) + (standard_width - coin_label.get_width()) // 2, y_position + standard_height + 10))
-        window.blit(heart_label, (start_x + 3 * (standard_width + spacing) + (standard_width - heart_label.get_width()) // 2, y_position + standard_height + 10))
+        window.fill(BLACK)  # Make the screen black
 
        
+        window.blit(info_text1, (50, 50))  
+        window.blit(info_text2, (50, 500))  
+
+        spacing = 50  # Space between images
+        total_width = 4 * standard_width + 3 * spacing  
+        start_x = (screen_width - total_width) // 2  
+        y_position = 150  # Vertical position for the images
+
+        window.blit(ant_info_img, (start_x, y_position))  # Ant image
+        window.blit(bat_info_img, (start_x + standard_width + spacing, y_position))  # Bat image
+        window.blit(coin_info_img, (start_x + 2 * (standard_width + spacing), y_position))  # Coin image
+        window.blit(heart_info_img, (start_x + 3 * (standard_width + spacing), y_position))  # Heart image
+
+        # Add labels below images
+        ant_label = font.render("Ant Enemy", True, WHITE)  # Label for ant
+        bat_label = font.render("Bat Enemy", True, WHITE)  # Label for bat
+        coin_label = font.render("Coins", True, WHITE)     # Label for coins
+        heart_label = font.render("Hearts (Health)", True, WHITE)  # Label for hearts
+
+        window.blit(ant_label, (start_x + (standard_width - ant_label.get_width()) // 2, y_position + standard_height + 10))  # Ant label
+        window.blit(bat_label, (start_x + standard_width + spacing + (standard_width - bat_label.get_width()) // 2, y_position + standard_height + 10))  # Bat label
+        window.blit(coin_label, (start_x + 2 * (standard_width + spacing) + (standard_width - coin_label.get_width()) // 2, y_position + standard_height + 10))  # Coin label
+        window.blit(heart_label, (start_x + 3 * (standard_width + spacing) + (standard_width - heart_label.get_width()) // 2, y_position + standard_height + 10))  # Heart label
+
+        # Instructions for Player on the info screen
+        instructions_start_x = (screen_width - (3 * standard_width + 2 * spacing)) // 2  
+        instructions_y_position = 250  # Vertical position 
+        instruction_spacing = spacing  # Space between instructions
+        window.blit(hubert_walk_info_img, (instructions_start_x, instructions_y_position))  # Hubert walking image
+        window.blit(missile_info_scaled_img, (instructions_start_x + standard_width + instruction_spacing, instructions_y_position))  # Missile image
+        window.blit(hubert_walk_info_img, (instructions_start_x + 2 * (standard_width + instruction_spacing), instructions_y_position))  # Hubert walking image again
+
+        # Show instruction texts below each image
+        window.blit(instruction_text1, (instructions_start_x, instructions_y_position + standard_height + 10))  # Jump
+        window.blit(instruction_text2, (instructions_start_x + standard_width + instruction_spacing, instructions_y_position + standard_height + 10))  # Shoot
+        window.blit(instruction_text3, (instructions_start_x + 2 * (standard_width + instruction_spacing), instructions_y_position + standard_height + 10))  # Move
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -751,314 +733,308 @@ def play():
                     pygame.quit()
                     sys.exit()
 
-        # Check if 5 seconds have passed to move to next screen 
+        # If 5 seconds have passed, go to the next screen
         current_time = pygame.time.get_ticks()
         if current_time - info_start_time > 5000:
-            info_loop = False
+            info_loop = False  
 
-        # Update the display
         pygame.display.update()
   
-    show_level_screen(all_levels_image)
+    show_level_screen(all_levels_image)  # Show all levels screen
 
+    # Main Game Loop
     running = True
     while running:
 
-        # Set a frame rate for the game.
-        clock.tick(frames_per_sec)
-        window.fill(BLACK)
+        clock.tick(frames_per_sec)  
+        window.fill(BLACK)  
 
-        # Update background based on level.
+        # Show background based on the current level
         if current_level == 1:
             for i in range(0, tiles):
-                window.blit(background_image, (i * background_width + moving_speed, 30))
-            moving_speed -= .5
+                window.blit(background_image, (i * background_width + moving_speed, 30))  # Show Level 1 background
+            moving_speed -= 0.5  # Move the background speed
             if abs(moving_speed) > background_width:
-                moving_speed = 0
+                moving_speed = 0  
 
         elif current_level == 2:
-            
             for i in range(0, tiles):
-                window.blit(level2_background_image, (i * level2_background_width + moving_speed, -75))
-            moving_speed -= .5
+                window.blit(level2_background_image, (i * level2_background_width + moving_speed, -75))  # Show Level 2 background
+            moving_speed -= 0.5  # Move the background speed
             if abs(moving_speed) > level2_background_width:
-                moving_speed = 0
+                moving_speed = 0 
 
         elif current_level == 3:
-            window.blit(spider_boss_background_image, (0, 0))  # Level 3 boss background 
+            window.blit(spider_boss_background_image, (0, 0))  # Show Level 3 (boss) background
 
-        # Draw the grid over the screen.
-        grid()
-
-        # Check all events.
+        
+        # Check all events like key presses and spawning enemies
         for event in pygame.event.get():
-            # First define an exit strategy for the loop.
-
-            # Did the user click the window close button? If so, stop the loop.
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
 
-            # Was a button pressed?
             elif event.type == KEYDOWN:
-                # Was it the Escape key? If so, stop the loop.
                 if event.key == K_ESCAPE:
-                    running = False
+                    running = False  # Stop the game loop
 
-                # Spacebar to jump
                 if event.key == K_SPACE:
-                    player.jump()
+                    player.jump()  # Make Hubert jump
 
-                # Fire Gun F
                 if event.key == K_f:
-                    player.shoot()
+                    player.shoot()  # Make Hubert shoot
 
-            # Is the time right for a new enemy.
             elif event.type == add_enemy and current_level < 3:
                 
-                ant_enemy = AnimatedAnt(ant_walk_images, scale=0.3, speed=5, x=990, y=420) 
-                enemies.add(ant_enemy)
-                all_sprites.add(ant_enemy)
-              
+                ant_enemy = AnimatedAnt(ant_walk_images, scale=0.5, speed=5, x=990, y=420)  
+                enemies.add(ant_enemy)  # Add to enemies group
+                all_sprites.add(ant_enemy)  # Add to all sprites
 
-            # Is the time right for a new coin.
             elif event.type == add_coin and current_level < 3:
-                # Create a new coin every 3000 milliseconds.
-                x = random.randint(screen_width + 50, screen_width + 100)
-                y = random.randint(50, 350)
-                coin = Coin(x, y)
-                coins.add(coin)
-                all_sprites.add(coin)
+                # Create a new coin at a random position
+                x = random.randint(screen_width + 50, screen_width + 100)  # Start off the screen
+                y = random.randint(50, 350)  
+                coin = Coin(x, y)  
+                coins.add(coin)  
+                all_sprites.add(coin)  
 
-            # Is the time right for a new bat.
             elif event.type == add_bat and current_level < 3:
-                # Only spawn a bat if there isn't one already
+            
                 if len(bats) == 0:
-                    x = screen_width + 50
-                    y = random.randint(0, 250)  # Above missile shooting height (adjust as needed)
-                    bat = Bat(x, y)
-                    bats.add(bat)
-                    all_sprites.add(bat)
+                    x = screen_width + 50  
+                    y = random.randint(0, 250)  
+                    bat = Bat(x, y)  
+                    bats.add(bat)  
+                    all_sprites.add(bat)  
 
             elif event.type == add_heart and current_level <= 3 and not heart_spawned[current_level]:
-                # Spawn the heart at the middle of the screen moving from right to left
-                heart = Heart(screen_width + 50, screen_height // 2)
-                hearts.add(heart)
-                all_sprites.add(heart)
-                heart_spawned[current_level] = True  # Ensure heart spawns only once per level
+                # Add a heart once per level
+                heart = Heart(screen_width + 50, screen_height // 2)  
+                hearts.add(heart)  
+                all_sprites.add(heart)  
+                heart_spawned[current_level] = True  
 
         player.move(current_level)  
 
-        # Update the position of our enemies, coins, bats, and hearts.
-        enemies.update()
-        coins.update()
-        bats.update()
-        boss_bullets.update()
-        hearts.update()  
+       
+        enemies.update()       
+        coins.update()         
+        bats.update()          
+        boss_bullets.update()  
+        hearts.update()        
 
-        # Update boss group if level 3
+        # If we're on Level 3, add the boss spider
         if current_level == 3 and not boss_group:
-            # Increase boss spider scale 
-            boss_spider = BossSpider(health=120, speed=4, scale=1.0) 
-
-            all_sprites.add(boss_spider)
-            boss_group.add(boss_spider)
+            boss_spider = BossSpider(health=120, speed=4, scale=1.0)  # Create the boss
+            all_sprites.add(boss_spider)  # Add to all sprites
+            boss_group.add(boss_spider)    # Add to boss group
 
         if current_level == 3:
-            boss_group.update()
-            boss_spider.draw_health(window)
-            boss_bullets.draw(window)
+            boss_group.update()              # Update the boss
+            boss_spider.draw_health(window)  # Show boss health
+            boss_bullets.draw(window)        # Show boss bullets
 
-        # Add a Scorecard/healthbar/etc here
+        # Show the player's health
         player.draw_health(window)
 
-        scores = font.render(f"SCORE: {collisions}", True, WHITE)
-        coin_display = font.render(f"COINS: {coin_score}", True, WHITE)
-        window.blit(scores, (10,10))
-        window.blit(coin_display, (10,40))
+        # Show scores and level on the screen
+        scores = font.render(f"SCORE: {collisions}", True, WHITE)       # Show score
+        coin_display = font.render(f"COINS: {coin_score}", True, WHITE)  # Show coins
+        window.blit(scores, (10,10))      # Put score on screen
+        window.blit(coin_display, (10,40))  # Put coins on screen
 
-        level_display = font.render(f"LEVEL: {current_level}", True, WHITE)
-        window.blit(level_display, (10,70))
+        level_display = font.render(f"LEVEL: {current_level}", True, WHITE)  # Show level
+        window.blit(level_display, (10,70))  # Put level on screen
 
-       
-        # Level progression condition
+        # Check if we've hit enough enemies to go to the next level
         if collisions >= 10 and current_level == 1:
-            current_level = 2
-            heart_spawned[current_level] = False  # Reset heart spawn for new level
-            show_level_screen(level1_done_image)
+            current_level = 2  # Go to level 2
+            heart_spawned[current_level] = False  # Reset heart spawn
+            show_level_screen(level1_done_image)  # Show Level 1 done screen
 
         elif collisions >= 20 and current_level == 2:
-            current_level = 3
-            heart_spawned[current_level] = False  # Reset heart spawn for new level
-            show_level_screen(level2_done_image)
-            player.rect.bottom = screen_height  
+            current_level = 3  # Go to level 3
+            heart_spawned[current_level] = False  # Reset heart spawn
+            show_level_screen(level2_done_image)  # Show Level 2 done screen
+            player.rect.bottom = screen_height  # Move player to the bottom of the screen
 
-        # Draw all our sprites
+        # Draw all sprites on the screen
         for entity in all_sprites:
             window.blit(entity.image, entity.rect)
 
-       
-        hearts.draw(window)
+        hearts.draw(window)  # Draw hearts
 
-       
+        # Check if the player got a heart
         heart_collisions = pygame.sprite.spritecollide(player, hearts, dokill=True)
         if heart_collisions:
-            player.health = 100  # Restore player health to full
+            player.health = 100  # Restore health to full
 
-        # Check for missile collisions with enemies
+        # Check if missiles hit enemies
         for missile in player.missiles[:]:
-            missile.update()
-            missiles.add(missile)
-            if pygame.sprite.spritecollide(missile, enemies, True):
-                missile.kill()
-                player.missiles.remove(missile)
-                collisions += 1
+            missile.update()  
+            missiles.add(missile)  
+            if pygame.sprite.spritecollide(missile, enemies, True):  
+                missile.kill()  
+                player.missiles.remove(missile)  
+                collisions += 1  
 
-            # Check for collision with bats
+            # Check if missiles hit bats
             if pygame.sprite.spritecollide(missile, bats, True):
-                missile.kill()
-                player.missiles.remove(missile)
-                collisions += 1
+                missile.kill()  
+                player.missiles.remove(missile)  
+                collisions += 1  
 
-            # Check for collision with boss spider
+            # Check if missiles hit the boss
             if current_level == 3 and pygame.sprite.spritecollide(missile, boss_group, False):
-                missile.kill()
-                player.missiles.remove(missile)
-                # Reduce boss spider's health
-                boss_spider.health -= 10  # Adjust damage value as needed
+                missile.kill()  
+                player.missiles.remove(missile)  
+                boss_spider.health -= 10  # Reduce boss health
 
-                if boss_spider.health <= 0:  # Check if boss spider is dead
-                    boss_spider.kill()
-                    boss_defeated = True
-                    running = False  # Exit the game loop to show victory screen
-                    show_level_screen(level3_done_image)
+                if boss_spider.health <= 0:  # If boss is dead
+                    boss_spider.kill()  
+                    boss_defeated = True  # 
+                    running = False  # Stop the game loop
+                    show_level_screen(level3_done_image)  # Show Level 3 done screen
 
-        # Check if any enemies have collided with the player
-        if pygame.sprite.spritecollide(player, enemies, dokill = True):
-            # If so, subtract health.
-            player.health -= 10
+        # Check if enemies hit the player
+        if pygame.sprite.spritecollide(player, enemies, dokill=True):
+            player.health -= 10  # Lose health
 
-        # Check if any bats have collided with the player
-        if pygame.sprite.spritecollide(player, bats, dokill = True):
-            player.health -= 1  # Bat causes 1 damage
+        # Check if bats hit the player
+        if pygame.sprite.spritecollide(player, bats, dokill=True):
+            player.health -= 5  # Lose a little health
 
-        # Check if any boss bullets have collided with the player
+        # Check if boss bullets hit the player
         if pygame.sprite.spritecollide(player, boss_bullets, dokill=True):
-            # If so, subtract health.
-            player.health -= 30  # Adjust damage from boss bullet here
+            player.health -= 35  # Lose a lot of health
 
-        # Check if any coins have been collected by the player
-        coins_collected = pygame.sprite.spritecollide(player, coins, dokill = True)
+        # Check if player collected any coins
+        coins_collected = pygame.sprite.spritecollide(player, coins, dokill=True)
         if coins_collected:
-            coin_score += len(coins_collected)
+            coin_score += len(coins_collected)  # Increase coin score
 
-
+        # If the player's health is zero or less, the player dies
         if player.health <= 0:
-            
             for entity in all_sprites:
-                entity.kill()
-            player.health = 100
-            time.sleep(0.5)
-            window.blit(you_died_background_image, (0,0))  
+                entity.kill() 
+            player.health = 100  # Reset health
+            time.sleep(0.5)  
+            window.blit(you_died_background_image, (0,0))  # Show death background
             
-            # You Died text in the middle of the screen 
+            # Show "You Died!" text
             death_text = font_large.render("You Died!", True, RED)
             death_text_rect = death_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
             window.blit(death_text, death_text_rect)
 
+            # Ask the player what to do next
             prompt_text = font.render("What would you like to do?", True, WHITE)
             prompt_text_rect = prompt_text.get_rect(center=(screen_width // 2, screen_height // 2))
             window.blit(prompt_text, prompt_text_rect)
 
-            pygame.display.update()
-            time.sleep(1.5)
-            running = False
+            pygame.display.update()  
+            time.sleep(1.5)  
+            running = False  
 
-        # Update the display for each loop.
+        
         pygame.display.update()
 
-   
+    # After the game loop ends, check if the boss was defeated
     if boss_defeated:
         victory_screen = True
         while victory_screen:
         
-            cave_exit_background = pygame.image.load("Cave Exit.png").convert_alpha()
+            cave_exit_background = pygame.image.load("Cave Exit.png").convert_alpha()  # Load victory background
             cave_exit_background = pygame.transform.scale(cave_exit_background, (screen_width, screen_height))  
             window.blit(cave_exit_background, (0,0))  
-
-            
+    
+            # Show texts
             congrats_text1 = font_large.render('You have survived the cave', True, BLACK)
             congrats_text2 = font_large.render("Now enjoy that treasure.", True, BLACK)
-            congrats_rect1 = congrats_text1.get_rect(center=(screen_width // 2, 250))  # Top of the screen
-            congrats_rect2 = congrats_text2.get_rect(center=(screen_width // 2, 300))  # Below the first line
-            window.blit(congrats_text1, congrats_rect1)
-            window.blit(congrats_text2, congrats_rect2)
+            congrats_rect1 = congrats_text1.get_rect(center=(screen_width // 2, 250))  
+            congrats_rect2 = congrats_text2.get_rect(center=(screen_width // 2, 300))  
+            window.blit(congrats_text1, congrats_rect1)  
+            window.blit(congrats_text2, congrats_rect2)  
 
-            button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2 + 50, 100, 50)
-            pygame.draw.rect(window, BLACK, button_rect)
-            finish_text = font.render('Finish', True, WHITE)
-            finish_rect = finish_text.get_rect(center=button_rect.center)
-            window.blit(finish_text, finish_rect)
+            # Create the Finish button
+            button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2 + 50, 100, 50)  # Button size and position
+            pygame.draw.rect(window, BLACK, button_rect)  
+            finish_text = font.render('Finish', True, WHITE)  
+            finish_rect = finish_text.get_rect(center=button_rect.center)  
+            window.blit(finish_text, finish_rect)  #
 
+            # Show the victory coin image
+            coin_y_offset = 30  # Make the coin higher on the screen
+            coin_x = screen_width // 2
+            coin_y = screen_height // 2 + 50 + coin_y_offset  
+            window.blit(victory_coin_image, (coin_x - victory_coin_image.get_width() // 2, coin_y))  
+
+            # Show how many coins were collected
+            coin_count_text = font.render(f"Coins Collected: {coin_score}", True, BLACK)  # Coin count
+            coin_count_rect = coin_count_text.get_rect(center=(screen_width // 2, coin_y + victory_coin_image.get_height() // 2 + 20))  
+            window.blit(coin_count_text, coin_count_rect)  # Show the coin count
+
+            # Show a message below the coin
+            tax_message = font.render("Don't forget to pay your taxes with these winnings.", True, BLACK)  
+            tax_message_rect = tax_message.get_rect(center=(screen_width // 2, coin_count_rect.bottom + 30))  
+            window.blit(tax_message, tax_message_rect)  
+
+            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     if button_rect.collidepoint(event.pos):
-                        victory_screen = False
+                        victory_screen = False  
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        victory_screen = False
+                        victory_screen = False  
 
-            pygame.display.update()
+            pygame.display.update()  
 
     else:
-        
+        # If the boss wasn't defeated, show the game over screen
         game_over_screen = True
 
         while game_over_screen:
-
-            window.blit(you_died_background_image, (0,0))  
-
+            window.blit(you_died_background_image, (0,0))  # Show death background
+    
+            # Show "You Died!" text
             death_text = font_large.render("You Died!", True, RED)
             death_text_rect = death_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
             window.blit(death_text, death_text_rect)
 
+            # Ask the player what to do next
             prompt_text = font.render("What would you like to do?", True, WHITE)
             prompt_text_rect = prompt_text.get_rect(center=(screen_width // 2, screen_height // 2))
             window.blit(prompt_text, prompt_text_rect)
 
-            # Player killed and end game screen
-
-            # Check all events.
+            
             for event in pygame.event.get():
-                # First define an exit strategy for the loop.
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        game_over_screen = False
+                        game_over_screen = False  # Exit the game over screen
 
-
-            # Restart and Exit buttons
+            # Show Restart and Exit buttons
             if restart_button.draw():
-                play()
+                play()  
 
             if exit_button.draw():
-                time.sleep(.5)
-                window.fill(BLACK)
-                window.blit(bye_img, (400,250))
-                pygame.display.update()
-                time.sleep(1)
-                game_over_screen = False
+                time.sleep(0.5)  
+                window.fill(BLACK)  
+                window.blit(bye_img, (400,250))  # Show bye text
+                pygame.display.update()  # Update the screen
+                time.sleep(1)  # Wait 1 second
+                game_over_screen = False  # Exit the game over screen
 
+            # Update the screen
             pygame.display.update()
 
-play()
+play()  
 
-# End game call here.
+
 pygame.quit()
 sys.exit()
