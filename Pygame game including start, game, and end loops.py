@@ -847,12 +847,12 @@ def play():
         window.blit(level_display, (10,70))  # Put level on screen
 
         # Check if we've hit enough enemies to go to the next level
-        if collisions >= 10 and current_level == 1:
+        if collisions >= 20 and current_level == 1:
             current_level = 2  # Go to level 2
             heart_spawned[current_level] = False  # Reset heart spawn
             show_level_screen(level1_done_image)  # Show Level 1 done screen
 
-        elif collisions >= 20 and current_level == 2:
+        elif collisions >= 40 and current_level == 2:
             current_level = 3  # Go to level 3
             heart_spawned[current_level] = False  # Reset heart spawn
             show_level_screen(level2_done_image)  # Show Level 2 done screen
