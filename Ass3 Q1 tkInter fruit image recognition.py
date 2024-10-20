@@ -21,8 +21,8 @@ img_confidence: list[float] = []
 
 ########################## PRE-TRAINED MODEL ##########################
 # Load the trained model and label encoder
-model = load_model("\\GitFruitModel\\fruit_detector_model.h5")
-label_encoder = np.load("\\GitFruitModel\\label_encoder.npy", allow_pickle=True)
+model = load_model("GitFruitModel/fruit_detector_model.h5")
+label_encoder = np.load("GitFruitModel/label_encoder.npy", allow_pickle=True)
 
 def load_and_prepare_image(image_path):
     try:
