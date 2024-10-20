@@ -334,9 +334,6 @@ def play():
             if pressed_keys[K_UP]:
                 self.rect.move_ip(0, -5)  # Move up
                 self.is_moving = True
-            if pressed_keys[K_DOWN]:
-                self.rect.move_ip(0, 5)   # Move down
-                self.is_moving = True
             if pressed_keys[K_LEFT]:
                 self.rect.move_ip(-5, 0)  # Move left
                 self.is_moving = True
@@ -345,7 +342,7 @@ def play():
                 self.is_moving = True
 
             # Apply gravity
-            self.vel_y += GRAVITY  
+            self.vel_y += GRAVITY
             self.rect.y += self.vel_y  
             
             # Keep Hubert on the ground for levels 1 and 2
@@ -504,7 +501,7 @@ def play():
             self.health = health  
             self.direction = random.choice(["up", "down", "left", "right"])  
             self.last_shot = pygame.time.get_ticks()  
-            self.shoot_cooldown = 3000  # How often the boss shoots (milliseconds)
+            self.shoot_cooldown = 2000  # How often the boss shoots (milliseconds)
             self.move_timer = pygame.time.get_ticks()  #
             self.move_delay = 1000  # How often the boss changes direction
 
@@ -675,11 +672,11 @@ def play():
     missile_info_scaled_img = pygame.transform.scale(missile_info_img, (standard_width, standard_height))  # Missile
 
     # info screen text
-    info_text1 = font_large.render("Watch out for these cave creatures that live in the cave.", True, WHITE)  
+    info_text1 = font_large.render("Watch out for these creatures that live in the cave.", True, WHITE)  
     info_text2 = font.render("Be on the look out for the BOSS:", True, WHITE) 
 
     # Instruction Texts on 2nd page
-    instruction_text1 = font.render("Space Bar to Jump", True, WHITE)         # Jump instruction
+    instruction_text1 = font.render("'Space' to Jump", True, WHITE)         # Jump instruction
     instruction_text2 = font.render("'F' to Shoot", True, WHITE)            # Shoot instruction
     instruction_text3 = font.render("Use Arrow Keys to Walk", True, WHITE)  # Move instruction
 
