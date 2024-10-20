@@ -15,8 +15,6 @@ import numpy as np
 #   and the canvas is accessible outside of the funtions(methods).
 global_image_list: list[PIL.ImageTk.PhotoImage] = []
 global_canvas_list: list[Canvas] = []
-type_food: list[str] = []
-category_food: list[str] = []
 file_name: list[str] = []
 img_predicted_label: list[str] = []
 img_confidence: list[float] = []
@@ -60,8 +58,9 @@ def print_result():
     """Display the result to the Entry boxes. Append results to list for access."""
     image_path = file_name[0]
     predicted_label, confidence = predict_fruit(image_path)
+    print(predicted_label)
     img_predicted_label.append(predicted_label)
-    confidence = f"{confidence * 100:.2f}%"
+    print(confidence)
     img_confidence.append(confidence)
 
 # A system message box that requires an "okay" button click by creating a
@@ -73,16 +72,20 @@ def intro():
     using a pretrained AI image recognition model.""")
 
 # Uses user generated extension input to open an image of *.extension
-def set_filetype(event) -> None:
+def set_filetype(filetype) -> None:
     """Change the filetype extension"""
-    print(f"The selected filteype is {selected_filetype.get()}")
+    try:
+        print(f"The selected filteype is {selected_filetype.get()}")
+    except TypeError:
+        print(f"The selected filteype is not set.")
 
-def open_file(extension) -> None:
+def open_file() -> None:
     """Open the file using a file selection dialogue to return a filepath based 
         upon limited file extensions that are user defined."""
-    extension = selected_filetype.get()
-    print(extension)
+    reset()
     while True:
+        extension = selected_filetype.get()
+        print(extension)
         if not extension:
             tkinter.messagebox.showerror("Error", "You must first select a filetype to import an image.")
             break
@@ -91,17 +94,19 @@ def open_file(extension) -> None:
             break
         else:
             filename = filedialog.askopenfilename(title = "Select an Image.", filetypes =[("Image Files", f"*.{extension}")])
+            
             if not filename:
                 break
             elif filename is not None:
-                print("Loading file...\nDone.")
                 file_name.append(filename)
+                print("Loading file...\nDone.")
                 break
-    scale_image(filename)
+    scale_image()
 
-def scale_image(filename) -> None:
+def scale_image() -> None:
     """Open the image to determine its size, then adjust to suit the canvas window.
         Also add the image to a list so that it is available once the function is called."""
+    filename = file_name[0]
     img_load =  PIL.ImageTk.PhotoImage(PIL.Image.open(filename))
     img_width = img_load.width()
     img_height = img_load.height()
@@ -141,11 +146,15 @@ def try_again():
 
 def reset():
     """Clear the image from its list, then destroys the instance of the canvas, 
-        and removes it from its list."""
+        and removes it from its list. Also clear all other lists to prevent issues."""
     global_image_list.clear()
     for canvas in global_canvas_list:
         canvas.destroy()
     global_canvas_list.clear()
+    file_name.clear()
+    img_predicted_label.clear()
+    img_confidence.clear()
+
 
 # Here we create the window UI.
 root = Tk()      # This is a class that creates a window.
@@ -159,7 +168,7 @@ except TclError:
     print("This feature is not supported")
 
 # Small delay before calling the introductory messagebox.
-root.after(2000, intro)
+root.after(1000, intro)
 
 # Create the Frames to arrange and store widgets.
 # Master frame.
@@ -199,15 +208,15 @@ frame_right= Frame(frame_all, background= "white", borderwidth= 2, padx= 10, pad
 
 frame_right.columnconfigure(0, weight= 1)
 frame_right.columnconfigure(1, weight= 1)
-frame_right.rowconfigure(0, weight= 2)
+frame_right.rowconfigure(0, weight= 1)
 frame_right.rowconfigure(1, weight= 1)
 frame_right.rowconfigure(2, weight= 1)
 frame_right.rowconfigure(3, weight= 1)
 frame_right.rowconfigure(4, weight= 1)
-frame_right.rowconfigure(5, weight= 2)
-frame_right.rowconfigure(6, weight= 2)
+frame_right.rowconfigure(5, weight= 1)
+frame_right.rowconfigure(6, weight= 1)
 frame_right.rowconfigure(7, weight= 2)
-frame_right.rowconfigure(8, weight= 2)
+frame_right.rowconfigure(8, weight= 1)
 frame_right.rowconfigure(9, weight= 2)
 
 frame_right.grid(column=2,  row=1, sticky=N+E+S+W)
@@ -215,20 +224,18 @@ frame_right.grid(column=2,  row=1, sticky=N+E+S+W)
 # Creating a Title for the window.
 heading_label = Label(frame_top, text="AI Fruit and Vegetable Classifier from Trained Model", font=("Arial", 18, "bold"))
 heading_label.grid(column = 1, row = 1)
-
+"""
 # Adding a little pzazz.
-img_L = PIL.Image.open("fruitbg.png")
-
-img_R = PIL.Image.open("fruitbgR.png")
-
-heading_img_L = Label(frame_top, image = img_L, font=("Arial", 18, "bold"))
+photo1 = tk.PhotoImage(file="fruitbg.png")
+heading_img_L = Label(frame_top, image = photo1, font=("Arial", 18, "bold"))
 heading_label.grid(column = 0, row = 1)
 
-heading_img_R = Label(frame_top, image = img_R, font=("Arial", 18, "bold"))
+photo2 = tk.PhotoImage(file="fruitbgR.png")
+heading_img_R = Label(frame_top, image = photo2, font=("Arial", 18, "bold"))
 heading_label.grid(column = 3, row = 1)
-
+"""
 # A label telling the user to select image format from selection box.
-type_label = Label(frame_right, background= "white", text="Choose the image format of your image.", font=("Arial", 12))
+type_label = Label(frame_right, background= "white", text="Choose the file format of your image.", font=("Arial", 12))
 type_label.grid(column= 0, columnspan= 2, row= 1, sticky=W)
 
 #Creating a selection (combobox) box to determine filetype.
@@ -238,7 +245,7 @@ filetype_combobox = ttk.Combobox(frame_right, textvariable = selected_filetype)
 filetype_combobox["state"] = "readonly"
 filetype_combobox["values"] = ["jpg", "jpeg", "png"]
 
-filetype_combobox.grid(column= 1, row= 2, sticky=W)
+filetype_combobox.grid(column= 0, row= 2, sticky=NW)
 
 filetype_combobox.bind("<<ComboboxSelected>>", set_filetype)
 
@@ -246,26 +253,33 @@ filetype_combobox.bind("<<ComboboxSelected>>", set_filetype)
 open_label = Label(frame_right, background= "white", text="Click 'Open' to import an image file.", font=("Arial", 12))
 open_label.grid(column= 0, columnspan= 2, row= 3, sticky=W)
 
-open_btn = Button(frame_right, text ="Open", command = open_file(selected_filetype.get()))
-open_btn.grid(column= 1, row= 4, sticky=W)
+open_btn = Button(frame_right, text ="Open", command = open_file)
+open_btn.grid(column= 2, row= 3, sticky=NW)
+
+# Creating a button to check.
+open_label = Label(frame_right, background= "white", text="Click 'Check Fruit' to see the type of fruit.", font=("Arial", 12))
+open_label.grid(column= 0, columnspan= 2, row= 4, sticky=W)
+
+open_btn = Button(frame_right, text ="Check Fruit", command = print_result)
+open_btn.grid(column= 2, row= 4, sticky=W)
 
 # Creating a display for the model output.
 # Display type of food.
 disp_type = Entry(frame_right, width = 38, font=("Arial", 14))
-disp_type.grid(column = 1, columnspan = 3, row = 6, sticky = W)
-disp_type.insert(0, img_predicted_label[0])
+disp_type.grid(column = 0, columnspan = 3, row = 7, sticky = W)
+disp_type.insert(0, "confidence")
 
 # Display type of fruit.
 disp_confidence = Entry(frame_right,  width = 38, font=("Arial", 14))
-disp_confidence.grid(column = 1, columnspan = 3, row = 7, sticky = W)
-disp_confidence.insert(0, str(img_confidence[0]))
-
+disp_confidence.grid(column = 0, columnspan = 3, row = 8, sticky = W)
+disp_confidence.insert(0, "confidence")
 
 # Creating a button to finish or restart.
-open_label = Label(frame_right, text="Click 'Finished' to import annother file.", font=("Arial", 12))
-open_label.grid(column= 0, columnspan= 2, row= 5, sticky=W)
+open_label = Label(frame_right, background= "white", text="Click 'Finish' to Finish.", font=("Arial", 12))
+open_label.grid(column= 0, columnspan= 2, row= 9, sticky=W)
+
 open_btn = Button(frame_right, text ="Finish", command = try_again)
-open_btn.grid(column= 1, row= 6, sticky=W)
+open_btn.grid(column= 2, row= 9, sticky=W)
 
 # Mainloop method.
 root.mainloop()
