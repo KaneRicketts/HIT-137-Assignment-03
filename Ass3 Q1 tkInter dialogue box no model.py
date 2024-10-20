@@ -3,8 +3,12 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import filedialog
 import tkinter.messagebox
-import PIL.Image
-import PIL.ImageTk
+import PIL.Image, PIL.ImageTk
+from keras.models import load_model
+from keras.preprocessing.image import img_to_array, load_img
+from sklearn.preprocessing import LabelEncoder
+import sys
+import numpy as np
 
 # Variables
 # Use list instead of global variable to ensure the image is not "garbage collected", 
@@ -13,8 +17,53 @@ global_image_list: list[PIL.ImageTk.PhotoImage] = []
 global_canvas_list: list[Canvas] = []
 type_food: list[str] = []
 category_food: list[str] = []
+file_name: list[str] = []
+img_predicted_label: list[str] = []
+img_confidence: list[float] = []
 
-# Functions to be called in window.
+
+########################## PRE-TRAINED MODEL ##########################
+# Load the trained model and label encoder
+model = load_model('fruit_detector_model.h5')
+label_encoder = np.load('label_encoder.npy', allow_pickle=True)
+
+def load_and_prepare_image(image_path):
+    try:
+        image = load_img(image_path, target_size=(100, 100))
+        image = img_to_array(image) / 255.0
+        return np.expand_dims(image, axis=0)
+    except Exception as e:
+        print(f"Error loading image {image_path}: {e}")
+        return None
+
+def predict_fruit(image_path) -> tuple[str, float]:
+    image = load_and_prepare_image(image_path)
+    if image is None:
+        print("Error loading image.")
+    
+    prediction = model.predict(image)
+    predicted_label_index = np.argmax(prediction)
+    confidence = prediction[0][predicted_label_index]
+
+    if confidence < 0.5:
+        predicted_label = "Not a fruit"
+        return (predicted_label, confidence)
+    else:
+        predicted_label = label_encoder[predicted_label_index]
+        #return f"{predicted_label} with {confidence * 100:.2f}% confidence"
+        return (predicted_label, confidence)
+
+########################## PRE-TRAINED MODEL ##########################
+
+# Functions to be called.
+def print_result():
+    """Display the result to the Entry boxes. Append results to list for access."""
+    image_path = file_name[0]
+    predicted_label, confidence = predict_fruit(image_path)
+    img_predicted_label.append(predicted_label)
+    confidence = f"{confidence * 100:.2f}%"
+    img_confidence.append(confidence)
+
 # A system message box that requires an "okay" button click by creating a
 #   showinfo messagebox, a pre-defined class of "information" box.
 def intro():
@@ -45,6 +94,8 @@ def open_file(extension) -> None:
             if not filename:
                 break
             elif filename is not None:
+                print("Loading file...\nDone.")
+                file_name.append(filename)
                 break
     scale_image(filename)
 
@@ -166,9 +217,9 @@ heading_label = Label(frame_top, text="AI Fruit and Vegetable Classifier from Tr
 heading_label.grid(column = 1, row = 1)
 
 # Adding a little pzazz.
-img_L = PIL.ImageTk.PhotoImage(PIL.Image.open(fruitbg.png))
+img_L = PIL.Image.open("fruitbg.png")
 
-img_R = PIL.ImageTk.PhotoImage(PIL.Image.open(fruitbgR.png))
+img_R = PIL.Image.open("fruitbgR.png")
 
 heading_img_L = Label(frame_top, image = img_L, font=("Arial", 18, "bold"))
 heading_label.grid(column = 0, row = 1)
@@ -195,18 +246,20 @@ filetype_combobox.bind("<<ComboboxSelected>>", set_filetype)
 open_label = Label(frame_right, background= "white", text="Click 'Open' to import an image file.", font=("Arial", 12))
 open_label.grid(column= 0, columnspan= 2, row= 3, sticky=W)
 
-open_btn = Button(frame_right, text ="Open", command = lambda:open_file(selected_filetype.get()))
+open_btn = Button(frame_right, text ="Open", command = open_file(selected_filetype.get()))
 open_btn.grid(column= 1, row= 4, sticky=W)
 
 # Creating a display for the model output.
-# Display category of food.
-disp_category = Entry(frame_right,  width = 38, font=("Arial", 14))
-disp_category.grid(column = 1, columnspan = 3, row = 6, sticky = W)
-disp_category.insert(0, category_food)
 # Display type of food.
 disp_type = Entry(frame_right, width = 38, font=("Arial", 14))
-disp_type.grid(column = 1, columnspan = 3, row = 7, sticky = W)
-disp_type.insert(0, type_food)
+disp_type.grid(column = 1, columnspan = 3, row = 6, sticky = W)
+disp_type.insert(0, img_predicted_label[0])
+
+# Display type of fruit.
+disp_confidence = Entry(frame_right,  width = 38, font=("Arial", 14))
+disp_confidence.grid(column = 1, columnspan = 3, row = 7, sticky = W)
+disp_confidence.insert(0, str(img_confidence[0]))
+
 
 # Creating a button to finish or restart.
 open_label = Label(frame_right, text="Click 'Finished' to import annother file.", font=("Arial", 12))
