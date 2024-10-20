@@ -53,28 +53,28 @@ def play():
 
     # Initializing Images
     # Button images
-    start_button_img = pygame.image.load("START.png").convert_alpha()
-    exit_button_img = pygame.image.load("EXIT.png").convert_alpha()
-    restart_button_img = pygame.image.load("RESTART.png").convert_alpha()
+    start_button_img = pygame.image.load("Resources/START.png").convert_alpha()
+    exit_button_img = pygame.image.load("Resources/EXIT.png").convert_alpha()
+    restart_button_img = pygame.image.load("Resources/RESTART.png").convert_alpha()
     # Enemy images
-    ant_image = pygame.image.load("Ant.png").convert_alpha()
+    ant_image = pygame.image.load("Resources/Ant.png").convert_alpha()
     # Backgrounds
     # Start Background
-    start_background_image = pygame.image.load("cave.jpg").convert_alpha()
+    start_background_image = pygame.image.load("Resources/cave.jpg").convert_alpha()
     start_rect = start_background_image.get_rect()
 
     # Game Background - Example only.
-    background_image = pygame.image.load("golden_cave_background.png").convert_alpha()
+    background_image = pygame.image.load("Resources/golden_cave_background.png").convert_alpha()
     background_width = background_image.get_width()
     background_height = background_image.get_height()
     tiles = 3       # How many game background images for smooth screen movement.
  
      # Level 2 Background
-    level2_background_image = pygame.image.load("large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
+    level2_background_image = pygame.image.load("Resources/large-deserted-cave-with-carved-entrance_1311536-6268.jpg").convert_alpha()
     level2_background_image = pygame.transform.scale(level2_background_image, (screen_width, screen_height))
 
     # Game-Over Background
-    end_background_image = pygame.image.load("spiders.jpg").convert_alpha()
+    end_background_image = pygame.image.load("Resources/spiders.jpg").convert_alpha()
     end_rect = end_background_image.get_rect()
     # Text Images
     bye_img = font_large.render("See you next time", True, PURPLE)
@@ -84,75 +84,75 @@ def play():
     # Load coin animation 
     coin_scale = 0.4  # make the coin smaller or larger
     walkCoin = [
-        pygame.transform.scale(pygame.image.load("Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin3.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin4.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin5.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
+        pygame.transform.scale(pygame.image.load("Resources/Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin3.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin4.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin5.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
     ]
 
     # Load bat animation 
     bat_scale = 0.6  # make the bat smaller or larger
     bat_images = [
-        pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_3.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_4.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_5.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_6.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
+        pygame.transform.scale(pygame.image.load("Resources/bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_3.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_4.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_5.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_6.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
 
     # Boss Spider Images
 
     # Spider Down images
     spider_down_images = [
-        pygame.image.load("Spider_Down_1.png").convert_alpha(),
-        pygame.image.load("Spider_Down_2.png").convert_alpha(),
-        pygame.image.load("Spider_Down_3.png").convert_alpha(),
-        pygame.image.load("Spider_Down_4.png").convert_alpha(),
-        pygame.image.load("Spider_Down_5.png").convert_alpha(),
-        pygame.image.load("Spider_Down_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_6.png").convert_alpha(),
     ]
 
     # Spider Left images
     spider_left_images = [
-        pygame.image.load("Spider_Left_1.png").convert_alpha(),
-        pygame.image.load("Spider_Left_2.png").convert_alpha(),
-        pygame.image.load("Spider_Left_3.png").convert_alpha(),
-        pygame.image.load("Spider_Left_4.png").convert_alpha(),
-        pygame.image.load("Spider_Left_5.png").convert_alpha(),
-        pygame.image.load("Spider_Left_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_6.png").convert_alpha(),
     ]
 
     # Spider Up images
     spider_up_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Up_6.png').convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_6.png").convert_alpha(),
     ]
 
     # Spider Right images
     spider_right_images = [
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_1.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_2.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_3.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_4.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_5.png').convert_alpha(),
-        pygame.image.load(r'C:\Users\kaner\Documents\GitHub\HIT-137-Assignment-03\Spider_Right_6.png').convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_6.png").convert_alpha(),
     ]
 
     # Boss shooting images
     boss_shoot_images = [
-        pygame.image.load("Bossshoot1.png").convert_alpha(),
-        pygame.image.load("Bossshoot2.png").convert_alpha(),
-        pygame.image.load("Bossshoot3.png").convert_alpha(),
-        pygame.image.load("Bossshoot4.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot1.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot2.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot3.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot4.png").convert_alpha(),
     ]
 
     # Drawing a grid on window for later.
@@ -291,7 +291,7 @@ def play():
     class Weapon(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Weapon, self).__init__()
-            missile_img = pygame.image.load('missile.png').convert_alpha()
+            missile_img = pygame.image.load("missile.png").convert_alpha()
             missile_img_copy = missile_img.copy()
             # pygame.transform.flip() will flip the image
             missile_img_with_flip = pygame.transform.flip(missile_img_copy, True, False)
@@ -359,7 +359,7 @@ def play():
             self.rect.center = (screen_width - 100, screen_height // 2)  # Start at right side of screen
             self.speed = speed  # Adjust the speed of the boss spider here
             self.health = health  # Adjust the health of the boss spider here
-            self.direction = random.choice(['up', 'down', 'left', 'right'])
+            self.direction = random.choice(["up", "down", "left", "right"])
             self.last_shot = pygame.time.get_ticks()
             self.shoot_cooldown = 3000  # Boss shoots every 5 seconds
             self.move_timer = pygame.time.get_ticks()
@@ -375,19 +375,19 @@ def play():
             # Random movement 
             current_time = pygame.time.get_ticks()
             if current_time - self.move_timer > self.move_delay:
-                self.direction = random.choice(['up', 'down', 'left', 'right'])
+                self.direction = random.choice(["up", "down", "left", "right"])
                 self.move_timer = current_time
 
-            if self.direction == 'up':
+            if self.direction == "up":
                 self.rect.y -= self.speed
                 self.images = self.images_up
-            elif self.direction == 'down':
+            elif self.direction == "down":
                 self.rect.y += self.speed
                 self.images = self.images_down
-            elif self.direction == 'left':
+            elif self.direction == "left":
                 self.rect.x -= self.speed
                 self.images = self.images_left
-            elif self.direction == 'right':
+            elif self.direction == "right":
                 self.rect.x += self.speed
                 self.images = self.images_right
 
@@ -697,14 +697,14 @@ def play():
         while victory_screen:
             window.fill(GREEN)
             # message on the screen 
-            congrats_text = font.render('Congratulations! You have survived the adventures of Hubert the game.', True, BLACK)
+            congrats_text = font.render("Congratulations! You have survived the adventures of Hubert the game.", True, BLACK)
             congrats_rect = congrats_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
             window.blit(congrats_text, congrats_rect)
 
             
             button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2, 100, 50)
             pygame.draw.rect(window, BLACK, button_rect)
-            finish_text = font.render('Finish', True, WHITE)
+            finish_text = font.render("Finish", True, WHITE)
             finish_rect = finish_text.get_rect(center=button_rect.center)
             window.blit(finish_text, finish_rect)
 
