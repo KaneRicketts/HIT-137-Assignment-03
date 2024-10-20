@@ -1,9 +1,9 @@
-import pygame  
-from pygame.locals import *  
+import os
 import sys  
 import random  
 import time  
-import os  
+import pygame  
+from pygame.locals import * 
 
 pygame.init()  # Start pygame so we can use it
 
@@ -53,42 +53,42 @@ def play():
     heart_spawned = {1: False, 2: False, 3: False}  # Hearts for levels 1, 2, and 3
 
     # Load pictures
-    start_button_img = pygame.image.load("START.png").convert_alpha()    # Start button
-    exit_button_img = pygame.image.load("EXIT.png").convert_alpha()      # Exit button
-    restart_button_img = pygame.image.load("RESTART.png").convert_alpha()# Restart button
+    start_button_img = pygame.image.load("Resources/START.png").convert_alpha()    # Start button
+    exit_button_img = pygame.image.load("Resources/EXIT.png").convert_alpha()      # Exit button
+    restart_button_img = pygame.image.load("Resources/RESTART.png").convert_alpha()# Restart button
 
     # Load ant pictures to make them walk
     ant_walk_images = [
-        pygame.image.load("Ant1.png").convert_alpha(),
-        pygame.image.load("Ant2.png").convert_alpha(),
-        pygame.image.load("Ant3.png").convert_alpha(),
-        pygame.image.load("Ant4.png").convert_alpha(),
-        pygame.image.load("Ant5.png").convert_alpha(),
-        pygame.image.load("Ant6.png").convert_alpha(),
+        pygame.image.load("Resources/Ant1.png").convert_alpha(),
+        pygame.image.load("Resources/Ant2.png").convert_alpha(),
+        pygame.image.load("Resources/Ant3.png").convert_alpha(),
+        pygame.image.load("Resources/Ant4.png").convert_alpha(),
+        pygame.image.load("Resources/Ant5.png").convert_alpha(),
+        pygame.image.load("Resources/Ant6.png").convert_alpha(),
     ]
     
     # Load backgrounds for different screens
-    start_background_image = pygame.image.load("You Found a Cave2.png").convert_alpha()  # Start screen background
+    start_background_image = pygame.image.load("Resources/You Found a Cave2.png").convert_alpha()  # Start screen background
     start_background_image = pygame.transform.scale(start_background_image, (screen_width, screen_height))  
     start_rect = start_background_image.get_rect()  #
 
     # Load game backgrounds for different levels
-    background_image = pygame.image.load("golden_cave_background.png").convert_alpha()  # Level 1 background
+    background_image = pygame.image.load("Resources/golden_cave_background.png").convert_alpha()  # Level 1 background
     background_width = background_image.get_width()    
     background_height = background_image.get_height()  
     tiles = 3  # How many times the background repeats to make scrolling smooth
 
     # Load Level 2 background
-    level2_background_image = pygame.image.load("Background 2.png").convert_alpha()
+    level2_background_image = pygame.image.load("Resources/Background 2.png").convert_alpha()
     level2_background_width = level2_background_image.get_width()
     level2_background_height = level2_background_image.get_height()
 
     # Load Level 3 (boss) background
-    spider_boss_background_image = pygame.image.load("Spider boss background.png").convert_alpha()
+    spider_boss_background_image = pygame.image.load("Resources/Spider boss background.png").convert_alpha()
     spider_boss_background_image = pygame.transform.scale(spider_boss_background_image, (screen_width, screen_height))  # Make it fit the screen
 
     # Load Game-Over background
-    you_died_background_image = pygame.image.load("You died background.png").convert_alpha()
+    you_died_background_image = pygame.image.load("Resources/You died background.png").convert_alpha()
     you_died_background_image = pygame.transform.scale(you_died_background_image, (screen_width, screen_height))  # Make it fit the screen
     you_died_rect = you_died_background_image.get_rect()
 
@@ -98,10 +98,10 @@ def play():
     game_start_image = font_large.render("ADVENTURES OF HUBERT THE GAME", True, BLUE)  # Game heading title text
 
     # Load images between levels
-    all_levels_image = pygame.image.load("All levels.png").convert_alpha()
-    level1_done_image = pygame.image.load("Level 1 done.png").convert_alpha()
-    level2_done_image = pygame.image.load("Level 2 done.png").convert_alpha()
-    level3_done_image = pygame.image.load("Level 3 done.png").convert_alpha()
+    all_levels_image = pygame.image.load("Resources/All levels.png").convert_alpha()
+    level1_done_image = pygame.image.load("Resources/Level 1 done.png").convert_alpha()
+    level2_done_image = pygame.image.load("Resources/Level 2 done.png").convert_alpha()
+    level3_done_image = pygame.image.load("Resources/Level 3 done.png").convert_alpha()
 
     # Make images fit the screen
     all_levels_image = pygame.transform.scale(all_levels_image, (screen_width, screen_height))
@@ -112,93 +112,93 @@ def play():
     # Load and scale coin images
     coin_scale = 0.4  # How big the coins are
     walkCoin = [
-        pygame.transform.scale(pygame.image.load("Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin3.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin4.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin5.png"), (int(100*coin_scale), int(100*coin_scale))),
-        pygame.transform.scale(pygame.image.load("Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
+        pygame.transform.scale(pygame.image.load("Resources/Coin1.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin2.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin3.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin4.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin5.png"), (int(100*coin_scale), int(100*coin_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/Coin6.png"), (int(100*coin_scale), int(100*coin_scale)))
     ]
 
     # Load and scale bat images
     bat_scale = 0.75  # How big the bats are
     bat_images = [
-        pygame.transform.scale(pygame.image.load("bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_3.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_4.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_5.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_6.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
-        pygame.transform.scale(pygame.image.load("bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
+        pygame.transform.scale(pygame.image.load("Resources/bat_1.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_2.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_3.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_4.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_5.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_6.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
    
     # Load spider (boss) images 
     # Spider Down images
     spider_down_images = [
-        pygame.image.load("Spider_Down_1.png").convert_alpha(),
-        pygame.image.load("Spider_Down_2.png").convert_alpha(),
-        pygame.image.load("Spider_Down_3.png").convert_alpha(),
-        pygame.image.load("Spider_Down_4.png").convert_alpha(),
-        pygame.image.load("Spider_Down_5.png").convert_alpha(),
-        pygame.image.load("Spider_Down_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Down_6.png").convert_alpha(),
     ]
 
     # Spider Left images
     spider_left_images = [
-        pygame.image.load("Spider_Left_1.png").convert_alpha(),
-        pygame.image.load("Spider_Left_2.png").convert_alpha(),
-        pygame.image.load("Spider_Left_3.png").convert_alpha(),
-        pygame.image.load("Spider_Left_4.png").convert_alpha(),
-        pygame.image.load("Spider_Left_5.png").convert_alpha(),
-        pygame.image.load("Spider_Left_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Left_6.png").convert_alpha(),
     ]
 
     # Spider Up images
     spider_up_images = [
-        pygame.image.load("Spider_Up_1.png").convert_alpha(),
-        pygame.image.load("Spider_Up_2.png").convert_alpha(),
-        pygame.image.load("Spider_Up_3.png").convert_alpha(),
-        pygame.image.load("Spider_Up_4.png").convert_alpha(),
-        pygame.image.load("Spider_Up_5.png").convert_alpha(),
-        pygame.image.load("Spider_Up_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Up_6.png").convert_alpha(),
     ]
 
     # Spider Right images
     spider_right_images = [
-        pygame.image.load("Spider_Right_1.png").convert_alpha(),
-        pygame.image.load("Spider_Right_2.png").convert_alpha(),
-        pygame.image.load("Spider_Right_3.png").convert_alpha(),
-        pygame.image.load("Spider_Right_4.png").convert_alpha(),
-        pygame.image.load("Spider_Right_5.png").convert_alpha(),
-        pygame.image.load("Spider_Right_6.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_1.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_2.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_3.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_4.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_5.png").convert_alpha(),
+        pygame.image.load("Resources/Spider_Right_6.png").convert_alpha(),
     ]
 
     # Load boss shooting images
     boss_shoot_images = [
-        pygame.image.load("Bossshoot1.png").convert_alpha(),
-        pygame.image.load("Bossshoot2.png").convert_alpha(),
-        pygame.image.load("Bossshoot3.png").convert_alpha(),
-        pygame.image.load("Bossshoot4.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot1.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot2.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot3.png").convert_alpha(),
+        pygame.image.load("Resources/Bossshoot4.png").convert_alpha(),
     ]
 
     # Load and scale heart images
     heart_scale = 0.2  # How big the hearts are
     heart_images = [
-        pygame.transform.scale(pygame.image.load("HP+1.1.png").convert_alpha(),
-                              (int(pygame.image.load("HP+1.1.png").get_width() * heart_scale),
-                               int(pygame.image.load("HP+1.1.png").get_height() * heart_scale))),
-        pygame.transform.scale(pygame.image.load("HP+1.2.png").convert_alpha(),
-                              (int(pygame.image.load("HP+1.2.png").get_width() * heart_scale),
-                               int(pygame.image.load("HP+1.2.png").get_height() * heart_scale))),
-        pygame.transform.scale(pygame.image.load("HP+1.3.png").convert_alpha(),
-                              (int(pygame.image.load("HP+1.3.png").get_width() * heart_scale),
-                               int(pygame.image.load("HP+1.3.png").get_height() * heart_scale)))
+        pygame.transform.scale(pygame.image.load("Resources/HP+1.1.png").convert_alpha(),
+                              (int(pygame.image.load("Resources/HP+1.1.png").get_width() * heart_scale),
+                               int(pygame.image.load("Resources/HP+1.1.png").get_height() * heart_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/HP+1.2.png").convert_alpha(),
+                              (int(pygame.image.load("Resources/HP+1.2.png").get_width() * heart_scale),
+                               int(pygame.image.load("Resources/HP+1.2.png").get_height() * heart_scale))),
+        pygame.transform.scale(pygame.image.load("Resources/HP+1.3.png").convert_alpha(),
+                              (int(pygame.image.load("Resources/HP+1.3.png").get_width() * heart_scale),
+                               int(pygame.image.load("Resources/HP+1.3.png").get_height() * heart_scale)))
     ]
     
     # Load Hubert walking and missile images for instructions page
-    hubert_walk_img = pygame.image.load("hubert1.png").convert_alpha()  # Hubert walking
-    missile_img = pygame.image.load("Bossshoot1.png").convert_alpha()  # Shooting image
+    hubert_walk_img = pygame.image.load("Resources/hubert1.png").convert_alpha()  # Hubert walking
+    missile_img = pygame.image.load("Resources/Bossshoot1.png").convert_alpha()  # Shooting image
 
     # Scale Hubert walk and missile images
     hubert_action_scale = 0.5  # How big Hubert and missiles are
@@ -206,7 +206,7 @@ def play():
     missile_info_img = pygame.transform.scale(missile_img, (int(missile_img.get_width() * hubert_action_scale), int(missile_img.get_height() * hubert_action_scale)))
 
     # Load and scale the victory coin image on last page/screen
-    victory_coin_image = pygame.image.load("Coin1.png").convert_alpha()  
+    victory_coin_image = pygame.image.load("Resources/Coin1.png").convert_alpha()  
     victory_coin_scale = 0.3  # How big the victory coin is
     victory_coin_image = pygame.transform.scale(victory_coin_image, (int(victory_coin_image.get_width() * victory_coin_scale), int(victory_coin_image.get_height() * victory_coin_scale)))
 
@@ -294,12 +294,12 @@ def play():
             
             # Load Hubert's walking images
             self.images = [
-                pygame.image.load("hubert1.png").convert_alpha(),
-                pygame.image.load("hubert2.png").convert_alpha(),
-                pygame.image.load("hubert3.png").convert_alpha(),
-                pygame.image.load("hubert4.png").convert_alpha(),
-                pygame.image.load("hubert5.png").convert_alpha(),
-                pygame.image.load("hubert6.png").convert_alpha()
+                pygame.image.load("Resources/hubert1.png").convert_alpha(),
+                pygame.image.load("Resources/hubert2.png").convert_alpha(),
+                pygame.image.load("Resources/hubert3.png").convert_alpha(),
+                pygame.image.load("Resources/hubert4.png").convert_alpha(),
+                pygame.image.load("Resources/hubert5.png").convert_alpha(),
+                pygame.image.load("Resources/hubert6.png").convert_alpha()
             ]
             
             # Make Hubert's images bigger or smaller
@@ -432,7 +432,7 @@ def play():
     class Weapon(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super(Weapon, self).__init__()
-            missile_img = pygame.image.load('missile.png').convert_alpha()  
+            missile_img = pygame.image.load("Resources/missile.png").convert_alpha()  
             missile_img_copy = missile_img.copy()
             missile_img_with_flip = pygame.transform.flip(missile_img_copy, True, False)
             self.image = missile_img_with_flip.convert_alpha() 
@@ -502,7 +502,7 @@ def play():
             self.rect.center = (screen_width - 100, screen_height // 2)  
             self.speed = speed  
             self.health = health  
-            self.direction = random.choice(['up', 'down', 'left', 'right'])  
+            self.direction = random.choice(["up", "down", "left", "right"])  
             self.last_shot = pygame.time.get_ticks()  
             self.shoot_cooldown = 3000  # How often the boss shoots (milliseconds)
             self.move_timer = pygame.time.get_ticks()  #
@@ -517,20 +517,20 @@ def play():
             # Change direction every move_delay milliseconds
             current_time = pygame.time.get_ticks()
             if current_time - self.move_timer > self.move_delay:
-                self.direction = random.choice(['up', 'down', 'left', 'right'])  
+                self.direction = random.choice(["up", "down", "left", "right"])  
                 self.move_timer = current_time  
 
             # Move the boss based on direction
-            if self.direction == 'up':
+            if self.direction == "up":
                 self.rect.y -= self.speed  
                 self.images = self.images_up  
-            elif self.direction == 'down':
+            elif self.direction == "down":
                 self.rect.y += self.speed  
                 self.images = self.images_down  
-            elif self.direction == 'left':
+            elif self.direction == "left":
                 self.rect.x -= self.speed  
                 self.images = self.images_left  
-            elif self.direction == 'right':
+            elif self.direction == "right":
                 self.rect.x += self.speed  
                 self.images = self.images_right  
 
@@ -943,12 +943,12 @@ def play():
         victory_screen = True
         while victory_screen:
         
-            cave_exit_background = pygame.image.load("Cave Exit.png").convert_alpha()  # Load victory background
+            cave_exit_background = pygame.image.load("Rescources/Cave Exit.png").convert_alpha()  # Load victory background
             cave_exit_background = pygame.transform.scale(cave_exit_background, (screen_width, screen_height))  
             window.blit(cave_exit_background, (0,0))  
     
             # Show texts
-            congrats_text1 = font_large.render('You have survived the cave', True, BLACK)
+            congrats_text1 = font_large.render("You have survived the cave", True, BLACK)
             congrats_text2 = font_large.render("Now enjoy that treasure.", True, BLACK)
             congrats_rect1 = congrats_text1.get_rect(center=(screen_width // 2, 250))  
             congrats_rect2 = congrats_text2.get_rect(center=(screen_width // 2, 300))  
@@ -958,7 +958,7 @@ def play():
             # Create the Finish button
             button_rect = pygame.Rect(screen_width // 2 - 50, screen_height // 2 + 50, 100, 50)  # Button size and position
             pygame.draw.rect(window, BLACK, button_rect)  
-            finish_text = font.render('Finish', True, WHITE)  
+            finish_text = font.render("Finish", True, WHITE)  
             finish_rect = finish_text.get_rect(center=button_rect.center)  
             window.blit(finish_text, finish_rect)  #
 
