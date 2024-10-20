@@ -943,7 +943,7 @@ def play():
         victory_screen = True
         while victory_screen:
         
-            cave_exit_background = pygame.image.load("Rescources/Cave Exit.png").convert_alpha()  # Load victory background
+            cave_exit_background = pygame.image.load("Resources/Cave Exit.png").convert_alpha()  # Load victory background
             cave_exit_background = pygame.transform.scale(cave_exit_background, (screen_width, screen_height))  
             window.blit(cave_exit_background, (0,0))  
     
