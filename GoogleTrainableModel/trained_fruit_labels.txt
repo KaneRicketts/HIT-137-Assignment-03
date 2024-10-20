@@ -1,0 +1,26 @@
+0 Apple
+1 Banana
+2 Grape
+3 Hog Plum
+4 Jackfruit
+5 Lychee
+6 Mango
+7 Orange
+8 Papaya
+9 Apricot
+10 Avocado
+11 Blackberry
+12 Blueberry
+13 Cherry
+14 Guava
+15 Kiwifruit
+16 Lemon
+17 Lime
+18 Melon
+19 Passionfruit
+20 Pear
+21 Pineapple
+22 Pomegranate
+23 Rambutan
+24 Strawberry
+25 Watermelon
