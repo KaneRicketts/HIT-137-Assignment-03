@@ -1021,8 +1021,7 @@ def play():
             # Update the screen
             pygame.display.update()
 
-play()  
-
+play()
 
 pygame.quit()
 sys.exit()
