@@ -8,22 +8,13 @@ pygame.init()  # Start pygame so we can use it
 
 # To play the game again, we put everything in a function called play
 def play():
-    
-    RED = (255, 0, 0)            
-    PINK = (255, 20, 147)        
-    GREEN = (0, 255, 0)          
-    DARKGREEN = (0, 100, 0)      
-    BLUE = (0, 0, 255)          
-    SKYBLUE = (0, 191, 255)      
-    CYAN = (0, 255, 255)         
-    BLACK = (0, 0, 0)            
-    GRAY = (128, 128, 128)       
-    LIGHTGRAY = (211, 211, 211)  
-    WHITE = (255, 255, 255)      
-    MAGENTA = (255, 0, 255)      
-    PURPLE = (128, 0, 128)       
-    GOLD = (255, 215, 0)         
-    BROWN = (139, 69, 19)        
+
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    PURPLE = (128, 0, 128)
 
     GRAVITY = 0.5        # How strong gravity is
     JUMP_VELOCITY = -10  # How high the player can jump
@@ -31,7 +22,7 @@ def play():
     # Set up the game window size
     screen_width = 1000
     screen_height = 600
-    window = pygame.display.set_mode((screen_width, screen_height))  
+    window = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("The Adventures of Hubert")  # Set the title of the window
 
     # Choose fonts to write text on the screen
@@ -65,16 +56,16 @@ def play():
         pygame.image.load("Resources/Ant5.png").convert_alpha(),
         pygame.image.load("Resources/Ant6.png").convert_alpha(),
     ]
-    
+
     # Load backgrounds for different screens
     start_background_image = pygame.image.load("Resources/You Found a Cave2.png").convert_alpha()  # Start screen background
     start_background_image = pygame.transform.scale(start_background_image, (screen_width, screen_height))  
-    start_rect = start_background_image.get_rect()  #
+    start_rect = start_background_image.get_rect()
 
     # Load game backgrounds for different levels
     background_image = pygame.image.load("Resources/golden_cave_background.png").convert_alpha()  # Level 1 background
-    background_width = background_image.get_width()    
-    background_height = background_image.get_height()  
+    background_width = background_image.get_width()
+    background_height = background_image.get_height()
     tiles = 3  # How many times the background repeats to make scrolling smooth
 
     # Load Level 2 background
@@ -131,7 +122,7 @@ def play():
         pygame.transform.scale(pygame.image.load("Resources/bat_7.png"), (int(100*bat_scale), int(50*bat_scale))),
         pygame.transform.scale(pygame.image.load("Resources/bat_8.png"), (int(100*bat_scale), int(50*bat_scale)))
     ]
-   
+
     # Load spider (boss) images 
     # Spider Down images
     spider_down_images = [
@@ -194,7 +185,7 @@ def play():
                               (int(pygame.image.load("Resources/HP+1.3.png").get_width() * heart_scale),
                                int(pygame.image.load("Resources/HP+1.3.png").get_height() * heart_scale)))
     ]
-    
+
     # Load Hubert walking and missile images for instructions page
     hubert_walk_img = pygame.image.load("Resources/hubert1.png").convert_alpha()  # Hubert walking
     missile_img = pygame.image.load("Resources/Bossshoot1.png").convert_alpha()  # Shooting image
@@ -209,7 +200,7 @@ def play():
     victory_coin_scale = 0.3  # How big the victory coin is
     victory_coin_image = pygame.transform.scale(victory_coin_image, (int(victory_coin_image.get_width() * victory_coin_scale), int(victory_coin_image.get_height() * victory_coin_scale)))
 
-  
+
     # Function to show level screens
     def show_level_screen(image):
         window.blit(image, (0,0))    
@@ -235,7 +226,7 @@ def play():
             self.rect.move_ip(-self.speed, 0)  
             if self.rect.right < 0:
                 self.kill()  # Remove the heart if it goes off screen
-   
+
     # ants that walk
     class AnimatedAnt(pygame.sprite.Sprite):
         def __init__(self, images, scale, speed, x, y):
@@ -253,10 +244,10 @@ def play():
             if self.index >= len(self.images):
                 self.index = 0  
             self.image = self.images[int(self.index)]  
-            self.rect.move_ip(-self.speed, 0)  #
+            self.rect.move_ip(-self.speed, 0)
             if self.rect.right < 0:
                 self.kill()  # Remove the ant if it goes off screen
-   
+
     # Buttons Class - makes buttons you can click
     class Buttons():
         """Make buttons and check if you clicked them."""
@@ -264,21 +255,21 @@ def play():
             width = image.get_width()
             height = image.get_height()
             self.image = pygame.transform.scale(image, ((int(width * scale)), (int(height * scale))))  
-            self.rect = self.image.get_rect()  
-            self.rect.topleft = (x, y)  
-            self.mouse_click = False  
+            self.rect = self.image.get_rect()
+            self.rect.topleft = (x, y)
+            self.mouse_click = False
 
         def draw(self):
             """Draw the button and check if it was clicked."""
             window.blit(self.image, (self.rect.x, self.rect.y))  
 
             clicked = False  
-            pos_mouse = pygame.mouse.get_pos()  
+            pos_mouse = pygame.mouse.get_pos()
 
-            if self.rect.collidepoint(pos_mouse):  
+            if self.rect.collidepoint(pos_mouse):
 
-                if pygame.mouse.get_pressed()[0] == 1 and not self.mouse_click:  
-                    self.mouse_click = True  #
+                if pygame.mouse.get_pressed()[0] == 1 and not self.mouse_click:
+                    self.mouse_click = True
                     clicked = True  # Button was clicked
 
                 if pygame.mouse.get_pressed()[0] == 0:  # If mouse button is released
@@ -290,7 +281,7 @@ def play():
     class Player(pygame.sprite.Sprite):
         def __init__(self, health, scale):
             super(Player, self).__init__()
-            
+
             # Load Hubert's walking images
             self.images = [
                 pygame.image.load("Resources/hubert1.png").convert_alpha(),
@@ -300,7 +291,7 @@ def play():
                 pygame.image.load("Resources/hubert5.png").convert_alpha(),
                 pygame.image.load("Resources/hubert6.png").convert_alpha()
             ]
-            
+
             # Make Hubert's images bigger or smaller
             self.images = [
                 pygame.transform.scale(img, (
@@ -308,6 +299,7 @@ def play():
                     int(img.get_height() * scale)
                 )) for img in self.images
             ]
+
             self.index = 0  # Current image
             self.image = self.images[self.index]  # Show the current image
             self.rect = self.image.get_rect()
@@ -477,7 +469,7 @@ def play():
             self.image = self.images[int(self.index)]  
             self.rect.move_ip(-self.speed, 0)  
             if self.rect.right < 0:
-                self.kill()  #
+                self.kill()
 
     # BossSpider Class - the big boss enemy
     class BossSpider(pygame.sprite.Sprite):
@@ -540,7 +532,7 @@ def play():
             if self.rect.bottom > screen_height:
                 self.rect.bottom = screen_height  
 
-            
+
             if current_time - self.last_shot > self.shoot_cooldown:
                 self.shoot()  
                 self.last_shot = current_time  
@@ -548,7 +540,7 @@ def play():
         def shoot(self):
             boss_bullet = BossBullet(self.rect.centerx, self.rect.centery)  
             all_sprites.add(boss_bullet)  
-            boss_bullets.add(boss_bullet)  
+            boss_bullets.add(boss_bullet)
 
         # Draw the boss's health bar
         def draw_health(self, surf):
@@ -620,7 +612,7 @@ def play():
     add_heart = pygame.USEREVENT + 4
     pygame.time.set_timer(add_heart, 10000)  # Add a heart every 10 seconds
 
-    
+
     start_loop = True
     while start_loop:
         window.fill(WHITE)  
